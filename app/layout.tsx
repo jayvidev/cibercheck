@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes'
 import NextTopLoader from 'nextjs-toploader'
 
 import { ThemeScript } from '@/components/shared/theme-script'
+import { Toaster } from '@/components/ui/sonner'
 
 import './globals.css'
 
@@ -50,6 +51,7 @@ export default function RootLayout({
           enableColorScheme
         >
           <NextTopLoader color="var(--primary)" height={3} easing="linear" showSpinner={false} />
+          <Toaster duration={5000} />
           {children}
         </ThemeProvider>
       </body>

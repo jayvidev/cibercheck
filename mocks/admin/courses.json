@@ -1,0 +1,58 @@
+[
+  {
+    "courseId": 1,
+    "name": "Desarrollo de Aplicaciones Móviles I",
+    "code": "DAM-I",
+    "slug": "desarrollo-de-aplicaciones-moviles-i",
+    "color": "#dc2626"
+  },
+  {
+    "courseId": 2,
+    "name": "Seguridad de Aplicaciones",
+    "code": "SEG-APP",
+    "slug": "seguridad-de-aplicaciones",
+    "color": "#2563eb"
+  },
+  {
+    "courseId": 3,
+    "name": "Experiencias Formativas en Situaciones Reales de Trabajo IV",
+    "code": "EFSRT-IV",
+    "slug": "experiencias-formativas-en-situaciones-reales-de-trabajo-iv",
+    "color": "#0891b2"
+  },
+  {
+    "courseId": 4,
+    "name": "Lenguaje de Programación II",
+    "code": "LP-II",
+    "slug": "lenguaje-de-programacion-ii",
+    "color": "#7c3aed"
+  },
+  {
+    "courseId": 5,
+    "name": "Desarrollo de Servicios Web I",
+    "code": "DSW-I",
+    "slug": "desarrollo-de-servicios-web-i",
+    "color": "#059669"
+  },
+  {
+    "courseId": 6,
+    "name": "Desarrollo de Aplicaciones Web I",
+    "code": "DAW-I",
+    "slug": "desarrollo-de-aplicaciones-web-i",
+    "color": "#ea580c"
+  },
+  {
+    "courseId": 7,
+    "name": "Base de Datos Avanzado I",
+    "code": "BDA-I",
+    "slug": "base-de-datos-avanzado-i",
+    "color": "#ec4899"
+  },
+  {
+    "courseId": 8,
+    "name": "Análisis y Diseño de Sistemas I",
+    "code": "ADS-I",
+    "slug": "analisis-y-diseno-de-sistemas-i",
+    "color": "#8b5cf6"
+  }
+]
