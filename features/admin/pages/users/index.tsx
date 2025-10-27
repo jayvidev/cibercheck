@@ -5,9 +5,7 @@ import { useEffect, useState } from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
-import { Skeleton } from '@/components/ui/skeleton'
-// API endpoints
-import { listUsers, updateUser, createUser } from '@/lib/endpoints/users'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -18,7 +16,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -26,6 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+// API endpoints
+import { createUser, listUsers, updateUser } from '@/lib/endpoints/users'
 
 import { columns as buildColumns } from './columns'
 import { type UserList, userListSchema } from './list.schema'

@@ -5,6 +5,7 @@ import NextTopLoader from 'nextjs-toploader'
 
 import { ThemeScript } from '@/components/shared/theme-script'
 import { Toaster } from '@/components/ui/sonner'
+import { AuthProvider } from '@/context/auth-context'
 
 import './globals.css'
 
@@ -50,9 +51,11 @@ export default function RootLayout({
           disableTransitionOnChange
           enableColorScheme
         >
-          <NextTopLoader color="var(--primary)" height={3} easing="linear" showSpinner={false} />
-          <Toaster duration={5000} />
-          {children}
+          <AuthProvider>
+            <NextTopLoader color="var(--primary)" height={3} easing="linear" showSpinner={false} />
+            <Toaster duration={5000} />
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

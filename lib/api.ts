@@ -1,6 +1,3 @@
-// Lightweight HTTP helper centralizing fetch usage for the Next.js app
-// Works on both client and server components (uses standard fetch)
-
 export type ApiError = {
   status: number
   statusText: string
@@ -9,7 +6,6 @@ export type ApiError = {
   url: string
 }
 
-// Minimal schema contract (duck-typed), compatible with zod's .parse
 export type Schema<T> = { parse: (data: unknown) => T }
 
 function getBaseUrl(): string {
@@ -38,9 +34,7 @@ export type FetchJsonOptions<T> = {
   body?: any
   schema?: Schema<T>
   signal?: AbortSignal
-  // When sending FormData, set jsonBody=false to avoid Content-Type being forced to application/json
   jsonBody?: boolean
-  // When true, will attempt to attach Authorization: Bearer <token> from cookie
   includeAuth?: boolean
 }
 
@@ -73,7 +67,6 @@ export async function fetchJson<T = unknown>({
     }
   }
 
-  // Attach Authorization header if available and requested
   if (includeAuth) {
     const token = await getAuthToken()
     if (token && !('Authorization' in initHeaders)) {
@@ -97,14 +90,17 @@ export async function fetchJson<T = unknown>({
       } else {
         errorBody = await res.text()
       }
-    } catch {
-      // ignore parse errors
-    }
+    } catch {}
+
+    const errorObj = errorBody as any
+    const errorMessage = errorObj?.detail || errorObj?.message || res.statusText || 'Request failed'
+    const errorTitle = errorObj?.title || ''
+    const fullMessage = errorTitle ? `${errorTitle}: ${errorMessage}` : errorMessage
 
     const err: ApiError = {
       status: res.status,
       statusText: res.statusText,
-      message: (errorBody as any)?.message || res.statusText || 'Request failed',
+      message: fullMessage,
       body: errorBody,
       url,
     }
@@ -130,12 +126,9 @@ export async function fetchJson<T = unknown>({
   return data as T
 }
 
-// Attempts to read an auth token from a cookie on client or server.
-// Cookie name can be configured via NEXT_PUBLIC_AUTH_COOKIE (default: 'auth_token').
 async function getAuthToken(): Promise<string | undefined> {
   const cookieName = (process.env.NEXT_PUBLIC_AUTH_COOKIE || 'auth_token').trim()
 
-  // Client-side: read document.cookie
   if (typeof window !== 'undefined') {
     try {
       const cookieStr = document.cookie || ''
@@ -151,9 +144,7 @@ async function getAuthToken(): Promise<string | undefined> {
     return undefined
   }
 
-  // Server-side: try next/headers cookies()
   try {
-    // Dynamically import to avoid bundling issues on client
     const mod: any = await import('next/headers')
     const cookiesFn = mod.cookies
     const maybeStore = typeof cookiesFn === 'function' ? cookiesFn() : cookiesFn

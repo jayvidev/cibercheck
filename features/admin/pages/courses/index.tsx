@@ -5,9 +5,7 @@ import { useEffect, useState } from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
-import { Skeleton } from '@/components/ui/skeleton'
-// API endpoints
-import { listCourses, getCourseSections, updateCourse, createCourse } from '@/lib/endpoints/courses'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -18,7 +16,9 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+// API endpoints
+import { createCourse, getCourseSections, listCourses, updateCourse } from '@/lib/endpoints/courses'
 
 import { columns as buildColumns } from './columns'
 import { CategoryList, categoryListSchema } from './list.schema'

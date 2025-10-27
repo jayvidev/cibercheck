@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { Bell, ChevronsUpDown, LogOut, User } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -22,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { useAuth } from '@/context/auth-context'
 
 export function NavUser({
   user,
@@ -35,12 +37,19 @@ export function NavUser({
   const { isMobile } = useSidebar()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+  const { logout } = useAuth()
+  const router = useRouter()
 
   const handleLogoutClick = () => {
     setDropdownOpen(false)
     setTimeout(() => {
       setConfirmDialogOpen(true)
     }, 50)
+  }
+
+  const handleConfirmLogout = () => {
+    logout()
+    router.push('/admin/iniciar-sesion')
   }
 
   return (
@@ -113,8 +122,8 @@ export function NavUser({
             icon: <LogOut />,
           }}
           onOpenChange={setConfirmDialogOpen}
+          onConfirm={handleConfirmLogout}
           open={confirmDialogOpen}
-          to="/iniciar-sesion"
         />
       </SidebarMenuItem>
     </SidebarMenu>

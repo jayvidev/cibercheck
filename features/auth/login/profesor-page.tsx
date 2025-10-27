@@ -2,9 +2,9 @@ import Image from 'next/image'
 
 import { Logo } from '@/components/shared/logo'
 
-import { LoginForm } from './form'
+import { ProfesorLoginForm } from './profesor-form'
 
-export function LoginPage() {
+export function ProfesorLoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -15,8 +15,8 @@ export function LoginPage() {
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
+          <div className="w-full max-w-md">
+            <ProfesorLoginForm />
           </div>
         </div>
       </div>

@@ -17,9 +17,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { listCourses } from '@/lib/endpoints/courses'
 import { getSectionsByCourseSlug } from '@/lib/endpoints/sections'
 
+import { CategoryList, categoryListSchema } from '../courses/list.schema'
 import { columns as buildColumns } from './columns'
 import { type SectionList, sectionListSchema } from './list.schema'
-import { CategoryList, categoryListSchema } from '../courses/list.schema'
 
 interface Props {
   title: string

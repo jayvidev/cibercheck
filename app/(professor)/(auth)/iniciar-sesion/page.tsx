@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
-import { LoginPage } from '@/features/auth/login'
+import { ProfesorLoginPage } from '@auth/login/profesor-page'
 
 export const metadata: Metadata = {
   title: 'Iniciar sesión',
 }
 
 export default function Page() {
-  return <LoginPage />
+  return <ProfesorLoginPage />
 }

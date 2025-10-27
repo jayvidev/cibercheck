@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { Home, LogOut, Settings, User } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
 import { Logo } from '@/components/shared/logo'
@@ -16,10 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { useAuth } from '@/context/auth-context'
 
 export function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+  const { logout } = useAuth()
+  const router = useRouter()
 
   const handleLogoutClick = () => {
     setDropdownOpen(false)
@@ -27,6 +31,12 @@ export function Header() {
       setConfirmDialogOpen(true)
     }, 50)
   }
+
+  const handleConfirmLogout = () => {
+    logout()
+    router.push('/iniciar-sesion')
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
@@ -73,8 +83,8 @@ export function Header() {
               icon: <LogOut />,
             }}
             onOpenChange={setConfirmDialogOpen}
+            onConfirm={handleConfirmLogout}
             open={confirmDialogOpen}
-            to="/iniciar-sesion"
           />
         </nav>
       </div>
