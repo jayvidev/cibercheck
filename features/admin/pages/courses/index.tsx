@@ -51,9 +51,11 @@ export function CategoriesPage({ title }: Props) {
   const [createOpen, setCreateOpen] = useState(false)
   const [createSaving, setCreateSaving] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
-  const [createForm, setCreateForm] = useState<{ name: string; code: string; color: string }>(
-    { name: '', code: '', color: '#dc2626' },
-  )
+  const [createForm, setCreateForm] = useState<{ name: string; code: string; color: string }>({
+    name: '',
+    code: '',
+    color: '#dc2626',
+  })
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -79,7 +81,12 @@ export function CategoriesPage({ title }: Props) {
     setDetailsError(null)
     setDetailsLoading(true)
     try {
-      const res = await getCourseSections<{ courseId: number; courseName: string; courseSlug: string; sections: { sectionId: number; name: string; slug: string; teacherId: number }[] }>(course.slug)
+      const res = await getCourseSections<{
+        courseId: number
+        courseName: string
+        courseSlug: string
+        sections: { sectionId: number; name: string; slug: string; teacherId: number }[]
+      }>(course.slug)
       setDetailsSections(res.sections)
     } catch (e) {
       setDetailsError(e instanceof Error ? e.message : 'Unknown error')
@@ -207,7 +214,10 @@ export function CategoriesPage({ title }: Props) {
                 <div>
                   <p className="text-sm text-muted-foreground">Color</p>
                   <div className="flex items-center gap-2">
-                    <span className="inline-block w-5 h-5 rounded border" style={{ backgroundColor: detailsCourse.color }} />
+                    <span
+                      className="inline-block w-5 h-5 rounded border"
+                      style={{ backgroundColor: detailsCourse.color }}
+                    />
                     <span className="font-mono">{detailsCourse.color}</span>
                   </div>
                 </div>
@@ -224,13 +234,14 @@ export function CategoriesPage({ title }: Props) {
                   <ul className="text-sm list-disc pl-5 space-y-1">
                     {detailsSections.map((s) => (
                       <li key={s.sectionId}>
-                        <span className="font-medium">{s.name}</span> <span className="text-muted-foreground">({s.slug})</span>
+                        <span className="font-medium">{s.name}</span>{' '}
+                        <span className="text-muted-foreground">({s.slug})</span>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-          </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
@@ -248,11 +259,19 @@ export function CategoriesPage({ title }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name">Nombre</Label>
-                  <Input id="name" value={editCourse.name} onChange={(e) => setEditCourse({ ...editCourse, name: e.target.value })} />
+                  <Input
+                    id="name"
+                    value={editCourse.name}
+                    onChange={(e) => setEditCourse({ ...editCourse, name: e.target.value })}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="code">Código</Label>
-                  <Input id="code" value={editCourse.code} onChange={(e) => setEditCourse({ ...editCourse, code: e.target.value })} />
+                  <Input
+                    id="code"
+                    value={editCourse.code}
+                    onChange={(e) => setEditCourse({ ...editCourse, code: e.target.value })}
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <Label htmlFor="color">Color</Label>
@@ -322,7 +341,11 @@ export function CategoriesPage({ title }: Props) {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={createSaving}>
+              <Button
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+                disabled={createSaving}
+              >
                 Cancelar
               </Button>
               <Button onClick={onSaveCreate} disabled={createSaving}>

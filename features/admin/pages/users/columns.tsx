@@ -14,56 +14,57 @@ export function columns(opts?: {
   onEdit?: (row: UserList) => void
 }): ColumnDef<UserList>[] {
   return [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todo"
-        className="translate-y-0.5"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Seleccionar fila"
-        className="translate-y-0.5"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'firstName',
-    header: withMetaLabelHeader<UserList>(),
-    meta: { searchable: true },
-  },
-  {
-    accessorKey: 'lastName',
-    header: withMetaLabelHeader<UserList>(),
-    meta: { searchable: true },
-  },
-  {
-    accessorKey: 'email',
-    header: withMetaLabelHeader<UserList>(),
-    meta: { searchable: true },
-  },
-  {
-    accessorKey: 'role',
-    header: withMetaLabelHeader<UserList>(),
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DataTableRowActions
-        onDetails={opts?.onDetails ? () => opts.onDetails!(row.original) : undefined}
-        onEdit={opts?.onEdit ? () => opts.onEdit!(row.original) : undefined}
-      />
-    ),
-  },
-]
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Seleccionar todo"
+          className="translate-y-0.5"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Seleccionar fila"
+          className="translate-y-0.5"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'firstName',
+      header: withMetaLabelHeader<UserList>(),
+      meta: { searchable: true },
+    },
+    {
+      accessorKey: 'lastName',
+      header: withMetaLabelHeader<UserList>(),
+      meta: { searchable: true },
+    },
+    {
+      accessorKey: 'email',
+      header: withMetaLabelHeader<UserList>(),
+      meta: { searchable: true },
+    },
+    {
+      accessorKey: 'role',
+      header: withMetaLabelHeader<UserList>(),
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => (
+        <DataTableRowActions
+          onDetails={opts?.onDetails ? () => opts.onDetails!(row.original) : undefined}
+          onEdit={opts?.onEdit ? () => opts.onEdit!(row.original) : undefined}
+        />
+      ),
+    },
+  ]
 }

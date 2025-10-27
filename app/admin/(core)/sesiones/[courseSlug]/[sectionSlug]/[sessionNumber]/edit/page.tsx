@@ -78,7 +78,8 @@ export default function Page({
       <Breadcrumbs />
       <h1 className="text-2xl font-bold">Editar sesión</h1>
       <div className="rounded border border-yellow-300 bg-yellow-50 text-yellow-800 p-3 text-sm">
-        Por ahora, esta edición está deshabilitada porque el API no expone el sessionId a partir de los slugs y el número de sesión.
+        Por ahora, esta edición está deshabilitada porque el API no expone el sessionId a partir de
+        los slugs y el número de sesión.
       </div>
       <form onSubmit={onSubmit} className="space-y-4 max-w-xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

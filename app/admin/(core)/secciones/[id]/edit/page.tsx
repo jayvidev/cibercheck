@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
@@ -85,7 +85,11 @@ export default function Page({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="name">Nombre</Label>
-            <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <Input
+              id="name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="courseId">Curso (ID)</Label>

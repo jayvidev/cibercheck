@@ -1,4 +1,4 @@
-import { fetchJson, type Schema } from "@/lib/api";
+import { fetchJson, type Schema } from '@/lib/api'
 
 // Endpoints for Sessions resource
 
@@ -8,14 +8,28 @@ export type SessionUpdatePayload = {
   [key: string]: unknown
 }
 
-export async function getSessionsByCourseSection<T = unknown>(courseSlug: string, sectionSlug: string, schema?: Schema<T>): Promise<T> {
-  return fetchJson<T>({ path: `/api/v1/sessions/course/${courseSlug}/section/${sectionSlug}`, schema })
+export async function getSessionsByCourseSection<T = unknown>(
+  courseSlug: string,
+  sectionSlug: string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/sessions/course/${courseSlug}/section/${sectionSlug}`,
+    schema,
+  })
 }
 
-export async function getSession<T = unknown>(sessionId: number | string, schema?: Schema<T>): Promise<T> {
+export async function getSession<T = unknown>(
+  sessionId: number | string,
+  schema?: Schema<T>
+): Promise<T> {
   return fetchJson<T>({ path: `/api/v1/sessions/${sessionId}`, schema })
 }
 
-export async function updateSession<T = unknown>(sessionId: number | string, body: SessionUpdatePayload, schema?: Schema<T>): Promise<T> {
-  return fetchJson<T>({ path: `/api/v1/sessions/${sessionId}`, method: "PUT", body, schema })
+export async function updateSession<T = unknown>(
+  sessionId: number | string,
+  body: SessionUpdatePayload,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/sessions/${sessionId}`, method: 'PUT', body, schema })
 }

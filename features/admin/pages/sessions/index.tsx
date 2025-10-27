@@ -5,7 +5,13 @@ import * as React from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 // API endpoints
 import { listCourses } from '@/lib/endpoints/courses'
@@ -69,7 +75,7 @@ export function SessionsPage({ title }: Props) {
         const items = await getSessionsByCourseSection<SessionStats[]>(
           selectedCourseSlug,
           selectedSectionSlug,
-          sessionStatsSchema.array(),
+          sessionStatsSchema.array()
         )
         setData(items)
         setError(null)

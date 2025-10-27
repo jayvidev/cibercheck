@@ -19,7 +19,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 import { columns as buildColumns } from './columns'
 import { type UserList, userListSchema } from './list.schema'
@@ -66,7 +72,8 @@ export function UsersPage({ title }: Props) {
   })
 
   const getCreateErrors = (f: typeof createForm) => {
-    const errs: Partial<Record<'firstName' | 'lastName' | 'email' | 'role' | 'password', string>> = {}
+    const errs: Partial<Record<'firstName' | 'lastName' | 'email' | 'role' | 'password', string>> =
+      {}
     if (!f.firstName.trim()) errs.firstName = 'Requerido'
     if (!f.lastName.trim()) errs.lastName = 'Requerido'
     if (!/.+@.+\..+/.test(f.email)) errs.email = 'Correo inválido'
@@ -234,7 +241,9 @@ export function UsersPage({ title }: Props) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar usuario</DialogTitle>
-            <DialogDescription>Actualiza los datos del usuario (email no editable).</DialogDescription>
+            <DialogDescription>
+              Actualiza los datos del usuario (email no editable).
+            </DialogDescription>
           </DialogHeader>
           {editError && <p className="text-sm text-destructive">{editError}</p>}
           {editUser && (
@@ -249,7 +258,9 @@ export function UsersPage({ title }: Props) {
                     onChange={(e) => setEditUser({ ...editUser, firstName: e.target.value })}
                   />
                   {getEditErrors(editUser).firstName && (
-                    <p className="text-xs text-destructive mt-1">{getEditErrors(editUser).firstName}</p>
+                    <p className="text-xs text-destructive mt-1">
+                      {getEditErrors(editUser).firstName}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -261,7 +272,9 @@ export function UsersPage({ title }: Props) {
                     onChange={(e) => setEditUser({ ...editUser, lastName: e.target.value })}
                   />
                   {getEditErrors(editUser).lastName && (
-                    <p className="text-xs text-destructive mt-1">{getEditErrors(editUser).lastName}</p>
+                    <p className="text-xs text-destructive mt-1">
+                      {getEditErrors(editUser).lastName}
+                    </p>
                   )}
                 </div>
                 <div className="sm:col-span-2">
@@ -294,7 +307,10 @@ export function UsersPage({ title }: Props) {
                 <Button variant="outline" onClick={() => setEditOpen(false)} disabled={editSaving}>
                   Cancelar
                 </Button>
-                <Button onClick={onSaveEdit} disabled={editSaving || Object.keys(getEditErrors(editUser)).length > 0}>
+                <Button
+                  onClick={onSaveEdit}
+                  disabled={editSaving || Object.keys(getEditErrors(editUser)).length > 0}
+                >
                   {editSaving ? 'Guardando...' : 'Guardar'}
                 </Button>
               </DialogFooter>
@@ -322,7 +338,9 @@ export function UsersPage({ title }: Props) {
                   onChange={(e) => setCreateForm({ ...createForm, firstName: e.target.value })}
                 />
                 {getCreateErrors(createForm).firstName && (
-                  <p className="text-xs text-destructive mt-1">{getCreateErrors(createForm).firstName}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {getCreateErrors(createForm).firstName}
+                  </p>
                 )}
               </div>
               <div>
@@ -334,7 +352,9 @@ export function UsersPage({ title }: Props) {
                   onChange={(e) => setCreateForm({ ...createForm, lastName: e.target.value })}
                 />
                 {getCreateErrors(createForm).lastName && (
-                  <p className="text-xs text-destructive mt-1">{getCreateErrors(createForm).lastName}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {getCreateErrors(createForm).lastName}
+                  </p>
                 )}
               </div>
               <div className="sm:col-span-2">
@@ -347,7 +367,9 @@ export function UsersPage({ title }: Props) {
                   onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
                 />
                 {getCreateErrors(createForm).email && (
-                  <p className="text-xs text-destructive mt-1">{getCreateErrors(createForm).email}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {getCreateErrors(createForm).email}
+                  </p>
                 )}
               </div>
               <div>
@@ -368,7 +390,9 @@ export function UsersPage({ title }: Props) {
                   </SelectContent>
                 </Select>
                 {getCreateErrors(createForm).role && (
-                  <p className="text-xs text-destructive mt-1">{getCreateErrors(createForm).role}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {getCreateErrors(createForm).role}
+                  </p>
                 )}
               </div>
               <div>
@@ -381,12 +405,18 @@ export function UsersPage({ title }: Props) {
                   onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
                 />
                 {getCreateErrors(createForm).password && (
-                  <p className="text-xs text-destructive mt-1">{getCreateErrors(createForm).password}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {getCreateErrors(createForm).password}
+                  </p>
                 )}
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={createSaving}>
+              <Button
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+                disabled={createSaving}
+              >
                 Cancelar
               </Button>
               <Button

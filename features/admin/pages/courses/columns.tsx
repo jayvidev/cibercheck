@@ -14,71 +14,72 @@ export function columns(opts?: {
   onEdit?: (row: CategoryList) => void
 }): ColumnDef<CategoryList>[] {
   return [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todo"
-        className="translate-y-0.5"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Seleccionar fila"
-        className="translate-y-0.5"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
-    header: withMetaLabelHeader<CategoryList>(),
-    meta: {
-      searchable: true,
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Seleccionar todo"
+          className="translate-y-0.5"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Seleccionar fila"
+          className="translate-y-0.5"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: 'code',
-    header: withMetaLabelHeader<CategoryList>(),
-    meta: {
-      searchable: true,
+    {
+      accessorKey: 'name',
+      header: withMetaLabelHeader<CategoryList>(),
+      meta: {
+        searchable: true,
+      },
     },
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'slug',
-    header: withMetaLabelHeader<CategoryList>(),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'color',
-    header: withMetaLabelHeader<CategoryList>(),
-    cell: ({ getValue }) => {
-      const color = getValue<string>()
-      return (
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded border" style={{ backgroundColor: color }} />
-          <span className="text-sm">{color}</span>
-        </div>
-      )
+    {
+      accessorKey: 'code',
+      header: withMetaLabelHeader<CategoryList>(),
+      meta: {
+        searchable: true,
+      },
+      enableSorting: false,
     },
-    enableSorting: false,
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DataTableRowActions
-        onDetails={opts?.onDetails ? () => opts.onDetails!(row.original) : undefined}
-        onEdit={opts?.onEdit ? () => opts.onEdit!(row.original) : undefined}
-      />
-    ),
-  },
-]
+    {
+      accessorKey: 'slug',
+      header: withMetaLabelHeader<CategoryList>(),
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'color',
+      header: withMetaLabelHeader<CategoryList>(),
+      cell: ({ getValue }) => {
+        const color = getValue<string>()
+        return (
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded border" style={{ backgroundColor: color }} />
+            <span className="text-sm">{color}</span>
+          </div>
+        )
+      },
+      enableSorting: false,
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => (
+        <DataTableRowActions
+          onDetails={opts?.onDetails ? () => opts.onDetails!(row.original) : undefined}
+          onEdit={opts?.onEdit ? () => opts.onEdit!(row.original) : undefined}
+        />
+      ),
+    },
+  ]
 }

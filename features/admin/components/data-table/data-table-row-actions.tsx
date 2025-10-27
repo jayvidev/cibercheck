@@ -41,7 +41,12 @@ export function DataTableRowActions({
             </Link>
           </DropdownMenuItem>
         ) : onDetails ? (
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onDetails() }}>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault()
+              onDetails()
+            }}
+          >
             <Info />
             Detalles
           </DropdownMenuItem>
@@ -59,7 +64,12 @@ export function DataTableRowActions({
             </Link>
           </DropdownMenuItem>
         ) : onEdit ? (
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onEdit() }}>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault()
+              onEdit()
+            }}
+          >
             <Pencil />
             Editar
           </DropdownMenuItem>

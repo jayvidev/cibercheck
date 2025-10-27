@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import * as React from 'react'
 
@@ -34,11 +34,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       const res = await login<{ token: string; user: any }>(email, password)
 
       const cookieName = (process.env.NEXT_PUBLIC_AUTH_COOKIE || 'auth_token').trim()
-      const parts = [
-        `${cookieName}=${encodeURIComponent(res.token)}`,
-        'Path=/',
-        'SameSite=Lax',
-      ]
+      const parts = [`${cookieName}=${encodeURIComponent(res.token)}`, 'Path=/', 'SameSite=Lax']
       if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
         parts.push('Secure')
       }
