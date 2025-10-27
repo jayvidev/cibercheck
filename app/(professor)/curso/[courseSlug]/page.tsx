@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { CourseSectionsPage } from '@professor/pages/course-sections'
 
-import coursesData from '@/mocks/courses.json'
+import coursesData from '@/mocks/professor/courses.json'
 
 export async function generateMetadata({
   params,

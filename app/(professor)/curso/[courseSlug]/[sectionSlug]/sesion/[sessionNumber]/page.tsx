@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { SessionAttendancePage } from '@professor/pages/session-attendance'
 
-import courseSectionDetail from '@/mocks/attendance.json'
-import sessionsData from '@/mocks/sessions.json'
+import courseSectionDetail from '@/mocks/professor/attendance.json'
+import sessionsData from '@/mocks/professor/sessions.json'
 
 export async function generateMetadata({
   params,

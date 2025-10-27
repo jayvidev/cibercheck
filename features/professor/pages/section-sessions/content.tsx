@@ -9,9 +9,9 @@ import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import courseSectionDetail from '@/mocks/attendance.json'
-import coursesData from '@/mocks/courses.json'
-import sessionsData from '@/mocks/sessions.json'
+import courseSectionDetail from '@/mocks/professor/attendance.json'
+import coursesData from '@/mocks/professor/courses.json'
+import sessionsData from '@/mocks/professor/sessions.json'
 
 interface SessionCardProps {
   sessionNumber: string
