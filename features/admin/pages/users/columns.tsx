@@ -7,12 +7,12 @@ import { DataTableRowActions } from '@admin/components/data-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { withMetaLabelHeader } from '@/lib/with-meta-label-header'
 
-import { CategoryList } from './list.schema'
+import { UserList } from './list.schema'
 
 export function columns(opts?: {
-  onDetails?: (row: CategoryList) => void
-  onEdit?: (row: CategoryList) => void
-}): ColumnDef<CategoryList>[] {
+  onDetails?: (row: UserList) => void
+  onEdit?: (row: UserList) => void
+}): ColumnDef<UserList>[] {
   return [
   {
     id: 'select',
@@ -38,38 +38,23 @@ export function columns(opts?: {
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
-    header: withMetaLabelHeader<CategoryList>(),
-    meta: {
-      searchable: true,
-    },
+    accessorKey: 'firstName',
+    header: withMetaLabelHeader<UserList>(),
+    meta: { searchable: true },
   },
   {
-    accessorKey: 'code',
-    header: withMetaLabelHeader<CategoryList>(),
-    meta: {
-      searchable: true,
-    },
-    enableSorting: false,
+    accessorKey: 'lastName',
+    header: withMetaLabelHeader<UserList>(),
+    meta: { searchable: true },
   },
   {
-    accessorKey: 'slug',
-    header: withMetaLabelHeader<CategoryList>(),
-    enableSorting: false,
+    accessorKey: 'email',
+    header: withMetaLabelHeader<UserList>(),
+    meta: { searchable: true },
   },
   {
-    accessorKey: 'color',
-    header: withMetaLabelHeader<CategoryList>(),
-    cell: ({ getValue }) => {
-      const color = getValue<string>()
-      return (
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded border" style={{ backgroundColor: color }} />
-          <span className="text-sm">{color}</span>
-        </div>
-      )
-    },
-    enableSorting: false,
+    accessorKey: 'role',
+    header: withMetaLabelHeader<UserList>(),
   },
   {
     id: 'actions',
