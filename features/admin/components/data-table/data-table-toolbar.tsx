@@ -22,16 +22,16 @@ interface DataTableToolbarProps<TData> {
 }
 
 export function DataTableToolbar<TData>({ table, resource }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
+  const hasGlobal = !!table.getState().globalFilter
+  const isFiltered = table.getState().columnFilters.length > 0 || hasGlobal
 
-  const searchCol = table.getAllLeafColumns().find((col) => col.columnDef.meta?.searchable)
+  const searchableCols = table.getAllLeafColumns().filter((col) => col.columnDef.meta?.searchable)
 
   const dateRangeCols = table
     .getAllLeafColumns()
     .filter((col) => col.columnDef.meta?.dateRangeFilter)
 
-  const searchValue =
-    (searchCol ? (table.getColumn(searchCol.id)?.getFilterValue() as string) : '') ?? ''
+  const searchValue = (table.getState().globalFilter as string) ?? ''
 
   const [dateRanges, setDateRanges] = useState<Record<string, DateRange | null>>({})
 
@@ -58,13 +58,13 @@ export function DataTableToolbar<TData>({ table, resource }: DataTableToolbarPro
   return (
     <div className="flex flex-wrap items-center justify-between space-x-2 gap-2">
       <div className="flex flex-wrap items-center gap-2">
-        {searchCol && (
+        {searchableCols.length > 0 && (
           <div className="relative">
             <Input
-              placeholder={`Buscar por ${getColumnLabel(resource, searchCol.id).toLowerCase()}…`}
+              placeholder={`Buscar…`}
               className="pl-9 pr-4 h-8 w-[190px] lg:w-[270px] text-sm"
               value={searchValue}
-              onChange={(e) => table.getColumn(searchCol.id)?.setFilterValue(e.target.value)}
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           </div>
@@ -108,6 +108,7 @@ export function DataTableToolbar<TData>({ table, resource }: DataTableToolbarPro
             size="sm"
             onClick={() => {
               table.resetColumnFilters()
+              table.setGlobalFilter('')
               setDateRanges({})
             }}
           >

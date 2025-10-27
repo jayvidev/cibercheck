@@ -65,6 +65,7 @@ interface DataTableProps<TData, TValue> {
   resource: string
   title?: string
   description?: string
+  onAdd?: () => void
 }
 
 export function DataTable<TData, TValue>({
@@ -73,6 +74,7 @@ export function DataTable<TData, TValue>({
   resource,
   title = 'Listado',
   description = 'Esta es la información disponible en la tabla.',
+  onAdd,
 }: DataTableProps<TData, TValue>) {
   const pathname = usePathname()
   const sidebarMeta = sidebarMap[pathname as keyof typeof sidebarMap]
@@ -86,6 +88,7 @@ export function DataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [globalFilter, setGlobalFilter] = React.useState('')
 
   const enhancedColumns = React.useMemo(() => {
     return columns.map((column): ColumnDef<TData, TValue> => {
@@ -120,6 +123,13 @@ export function DataTable<TData, TValue>({
     })
   }, [columns, resource])
 
+  const searchableColumnIds = React.useMemo(() => {
+    return enhancedColumns
+      .filter((c) => (c as any).meta?.searchable)
+      .map((c) => (c.id ?? (c as any).accessorKey) as string)
+      .filter(Boolean)
+  }, [enhancedColumns])
+
   const table = useReactTable({
     data,
     columns: enhancedColumns,
@@ -129,18 +139,32 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
       pagination,
+      globalFilter,
     },
     onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    globalFilterFn: (row, _columnId, filterValue) => {
+      const term = String(filterValue ?? '').trim()
+      if (!term) return true
+      const normalizedFilterValue = normalizeText(term)
+      for (const id of searchableColumnIds) {
+        const cellValue = row.getValue(id as any)
+        if (cellValue === null || cellValue === undefined) continue
+        const normalizedCellValue = normalizeText(String(cellValue))
+        if (normalizedCellValue.includes(normalizedFilterValue)) return true
+      }
+      return false
+    },
     enableRowSelection: true,
   })
 
@@ -163,7 +187,7 @@ export function DataTable<TData, TValue>({
             <FileSpreadsheet className="text-destructive" />
             PDF
           </Button>
-          <Button>
+          <Button onClick={onAdd}>
             <CirclePlus />
             Agregar
           </Button>
