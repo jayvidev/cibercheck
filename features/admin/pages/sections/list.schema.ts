@@ -7,6 +7,10 @@ export const sectionListSchema = z.object({
   name: z.string(),
   slug: z.string(),
   teacherId: z.number(),
+  courseName: z.string().optional(),
+  courseSlug: z.string().optional(),
+  studentsCount: z.number().optional(),
+  sessionsCount: z.number().optional(),
 })
 
 export type SectionList = z.infer<typeof sectionListSchema>

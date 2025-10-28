@@ -10,7 +10,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <ProtectedRoute requiredRole="admin">
+    <ProtectedRoute requiredRole="administrador">
       <DashboardLayout>
         <div className="flex flex-1 p-5 gap-4 flex-col">{children}</div>
       </DashboardLayout>

@@ -39,11 +39,20 @@ export const columns = (basePath = '/admin/secciones'): ColumnDef<SectionList>[]
     meta: { searchable: true },
   },
   {
+    accessorKey: 'courseName',
+    header: withMetaLabelHeader<SectionList>(),
+    meta: { searchable: true },
+  },
+  {
     accessorKey: 'slug',
     header: withMetaLabelHeader<SectionList>(),
   },
   {
-    accessorKey: 'teacherId',
+    accessorKey: 'studentsCount',
+    header: withMetaLabelHeader<SectionList>(),
+  },
+  {
+    accessorKey: 'sessionsCount',
     header: withMetaLabelHeader<SectionList>(),
   },
   {
