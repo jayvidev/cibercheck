@@ -45,14 +45,8 @@ export function AdminLoginForm({ className, ...props }: React.ComponentPropsWith
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      if (user?.role === 'admin') {
-        router.push('/admin')
-      } else if (user?.role === 'estudiante') {
-        toast.error('Los estudiantes deben ingresar por la aplicación móvil.')
-        router.push('/admin/iniciar-sesion')
-      } else if (user?.role === 'profesor') {
-        router.push('/')
-      }
+      // Siempre redirigir al dashboard de admin desde esta página
+      router.push('/admin')
     }
   }, [isAuthenticated, user, router])
 
