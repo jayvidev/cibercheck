@@ -9,7 +9,13 @@ import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { listCourses } from '@/lib/endpoints/courses'
 import { listUsers } from '@/lib/endpoints/users'
 import { getSection, updateSection } from '@/lib/endpoints/sections'
@@ -30,7 +36,9 @@ export default function Page({ params }: { params: { id: string } }) {
   const [error, setError] = React.useState<string | null>(null)
   const [form, setForm] = React.useState<SectionDto | null>(null)
   const [courses, setCourses] = React.useState<{ courseId: number; name: string }[]>([])
-  const [teachers, setTeachers] = React.useState<{ userId: number; firstName: string; lastName: string }[]>([])
+  const [teachers, setTeachers] = React.useState<
+    { userId: number; firstName: string; lastName: string }[]
+  >([])
 
   React.useEffect(() => {
     ;(async () => {

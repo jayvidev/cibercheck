@@ -26,7 +26,14 @@ import { CategoryList, categoryListSchema } from '../courses/list.schema'
 import { columns as buildColumns } from './columns'
 import { type SectionList, sectionListSchema } from './list.schema'
 import { useAuth } from '@/context/auth-context'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -43,7 +50,9 @@ export function SectionsPage({ title }: Props) {
   const [creating, setCreating] = React.useState(false)
   const [newSectionName, setNewSectionName] = React.useState('')
   const [selectedTeacherId, setSelectedTeacherId] = React.useState<number | null>(null)
-  const [teachers, setTeachers] = React.useState<{ userId: number; firstName: string; lastName: string }[]>([])
+  const [teachers, setTeachers] = React.useState<
+    { userId: number; firstName: string; lastName: string }[]
+  >([])
   const { user } = useAuth()
 
   // Helper para sugerir el nombre de la sección con letras estilo "Sección A", "Sección B", ...

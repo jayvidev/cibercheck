@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import * as React from 'react'
 
@@ -13,7 +13,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 // API endpoints
@@ -40,11 +46,11 @@ export function SessionsPage({ title }: Props) {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [creating, setCreating] = React.useState(false)
-  const [newSessionNumber, setNewSessionNumber] = React.useState<string>("1")
-  const [newDate, setNewDate] = React.useState<string>("")
-  const [newStartTime, setNewStartTime] = React.useState<string>("")
-  const [newEndTime, setNewEndTime] = React.useState<string>("")
-  const [newTopic, setNewTopic] = React.useState<string>("")
+  const [newSessionNumber, setNewSessionNumber] = React.useState<string>('1')
+  const [newDate, setNewDate] = React.useState<string>('')
+  const [newStartTime, setNewStartTime] = React.useState<string>('')
+  const [newEndTime, setNewEndTime] = React.useState<string>('')
+  const [newTopic, setNewTopic] = React.useState<string>('')
 
   React.useEffect(() => {
     const fetchCourses = async () => {

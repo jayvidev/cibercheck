@@ -9,9 +9,9 @@ export const columnLabelsByResource: Record<string, Record<string, string>> = {
     name: 'Nombre',
     slug: 'Slug',
     teacherId: 'Profesor',
-      courseName: 'Curso',
+    courseName: 'Curso',
     studentsCount: 'Nº Alumnos',
-      sessionsCount: 'Nº Sesiones',
+    sessionsCount: 'Nº Sesiones',
   },
   sesiones: {
     sessionNumber: 'Nº Sesión',

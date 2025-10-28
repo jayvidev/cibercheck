@@ -27,7 +27,7 @@ export function ProtectedRoute({ children, requiredRole = 'profesor' }: Protecte
       }
       return
     }
-     console.log('User role:', user?.role, 'Required role:', requiredRole);
+    console.log('User role:', user?.role, 'Required role:', requiredRole)
     if (requiredRole && user?.role !== requiredRole) {
       router.replace('/acceso-denegado')
       return
