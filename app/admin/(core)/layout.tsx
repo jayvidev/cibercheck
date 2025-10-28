@@ -6,5 +6,5 @@ interface Props {
 }
 
 export default function Layout({ children }: Props) {
-  return <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>
+  return <ProtectedRoute requiredRole="administrador">{children}</ProtectedRoute>
 }

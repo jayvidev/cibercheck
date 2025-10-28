@@ -15,11 +15,20 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 // API endpoints
 import { listCourses } from '@/lib/endpoints/courses'
-import { getSectionsByCourseSlug } from '@/lib/endpoints/sections'
+import {
+  createSectionForCourse,
+  getSectionsByCourseSlug,
+  getSectionsStatsByCourseSlug,
+} from '@/lib/endpoints/sections'
+import { listUsers } from '@/lib/endpoints/users'
 
 import { CategoryList, categoryListSchema } from '../courses/list.schema'
 import { columns as buildColumns } from './columns'
 import { type SectionList, sectionListSchema } from './list.schema'
+import { useAuth } from '@/context/auth-context'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   title: string
@@ -31,6 +40,49 @@ export function SectionsPage({ title }: Props) {
   const [data, setData] = React.useState<SectionList[]>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
+  const [creating, setCreating] = React.useState(false)
+  const [newSectionName, setNewSectionName] = React.useState('')
+  const [selectedTeacherId, setSelectedTeacherId] = React.useState<number | null>(null)
+  const [teachers, setTeachers] = React.useState<{ userId: number; firstName: string; lastName: string }[]>([])
+  const { user } = useAuth()
+
+  // Helper para sugerir el nombre de la sección con letras estilo "Sección A", "Sección B", ...
+  function getNextSectionLabel(existingNames: string[]): string {
+    const normalize = (s: string) => s.trim().toUpperCase()
+    const letterFromName = (name: string): string | null => {
+      const n = normalize(name)
+      // Buscar patrón "SECCIÓN X" o tomar última palabra si es alfabética
+      const m = n.match(/SECCI[ÓO]N\s+([A-Z]{1,2})$/)
+      if (m) return m[1]
+      const parts = n.split(/\s+/)
+      const last = parts[parts.length - 1]
+      return /^[A-Z]{1,2}$/.test(last) ? last : null
+    }
+
+    // Conjunto de etiquetas usadas (A..Z, AA..)
+    const used = new Set<string>()
+    for (const name of existingNames) {
+      const L = letterFromName(name)
+      if (L) used.add(L)
+    }
+
+    // Generar etiqueta tipo Excel (A..Z, AA..AZ, BA..)
+    const toLabel = (n: number): string => {
+      let s = ''
+      let x = n
+      while (x > 0) {
+        x--
+        s = String.fromCharCode(65 + (x % 26)) + s
+        x = Math.floor(x / 26)
+      }
+      return s
+    }
+
+    // Buscar la primera etiqueta libre
+    let i = 1
+    while (used.has(toLabel(i))) i++
+    return `Sección ${toLabel(i)}`
+  }
 
   React.useEffect(() => {
     const fetchCourses = async () => {
@@ -45,13 +97,41 @@ export function SectionsPage({ title }: Props) {
     fetchCourses()
   }, [])
 
+  // Cargar profesores si el usuario es admin (para asignar docente al crear sección)
+  React.useEffect(() => {
+    const fetchTeachers = async () => {
+      if (user?.role !== 'admin') {
+        setTeachers([])
+        setSelectedTeacherId(user?.userId ?? null)
+        return
+      }
+      try {
+        const users = await listUsers<any[]>()
+        const profs = (users || []).filter((u) => u.role === 'profesor')
+        setTeachers(profs)
+        setSelectedTeacherId(profs[0]?.userId ?? null)
+      } catch {}
+    }
+    fetchTeachers()
+  }, [user])
+
   React.useEffect(() => {
     const fetchSections = async () => {
       if (!selectedCourseSlug) return
       try {
         setLoading(true)
-        const res = await getSectionsByCourseSlug<{ sections: SectionList[] }>(selectedCourseSlug)
-        const parsed = sectionListSchema.array().parse(res.sections)
+        const res = await getSectionsStatsByCourseSlug<any>(selectedCourseSlug)
+        const sections = (res?.sections ?? []).map((s: any) => ({
+          sectionId: s.sectionId,
+          name: s.name,
+          slug: s.slug,
+          teacherId: s.teacherId,
+          courseName: s.courseName ?? res?.courseName,
+          courseSlug: s.courseSlug ?? res?.courseSlug,
+          studentsCount: s.studentsCount,
+          sessionsCount: s.sessionsCount,
+        }))
+        const parsed = sectionListSchema.array().parse(sections)
         setData(parsed)
         setError(null)
       } catch (err) {
@@ -63,6 +143,14 @@ export function SectionsPage({ title }: Props) {
     }
     fetchSections()
   }, [selectedCourseSlug])
+
+  // Sugerir nombre automático al abrir el diálogo o cambiar de curso
+  React.useEffect(() => {
+    if (!creating) return
+    const names = data.map((s) => s.name || '')
+    const suggestion = getNextSectionLabel(names)
+    if (!newSectionName) setNewSectionName(suggestion)
+  }, [creating, data, newSectionName])
 
   const columns = React.useMemo(() => buildColumns('/admin/secciones'), [])
 
@@ -79,6 +167,37 @@ export function SectionsPage({ title }: Props) {
         </div>
       </>
     )
+  }
+
+  const handleCreateSection = async () => {
+    if (!selectedCourseSlug || !newSectionName.trim() || !selectedTeacherId) return
+    try {
+      setLoading(true)
+      await createSectionForCourse(selectedCourseSlug, {
+        name: newSectionName.trim(),
+        teacherId: selectedTeacherId,
+      })
+      setCreating(false)
+      setNewSectionName('')
+      // refrescar
+      const res = await getSectionsStatsByCourseSlug<any>(selectedCourseSlug)
+      const sections = (res?.sections ?? []).map((s: any) => ({
+        sectionId: s.sectionId,
+        name: s.name,
+        slug: s.slug,
+        teacherId: s.teacherId,
+        courseName: s.courseName ?? res?.courseName,
+        courseSlug: s.courseSlug ?? res?.courseSlug,
+        studentsCount: s.studentsCount,
+        sessionsCount: s.sessionsCount,
+      }))
+      const parsed = sectionListSchema.array().parse(sections)
+      setData(parsed)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo crear la sección')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -105,13 +224,82 @@ export function SectionsPage({ title }: Props) {
           <p className="text-sm">{error}</p>
         </div>
       ) : (
-        <DataTable
-          columns={columns}
-          data={data}
-          resource="secciones"
-          title={title}
-          description="Secciones por curso."
-        />
+        <>
+          <DataTable
+            columns={columns}
+            data={data}
+            resource="secciones"
+            title={title}
+            description="Secciones por curso."
+            onAdd={() => setCreating(true)}
+          />
+          <Dialog open={creating} onOpenChange={setCreating}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Crear sección</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted-foreground">Curso</label>
+                  <Select
+                    value={selectedCourseSlug ?? undefined}
+                    onValueChange={setSelectedCourseSlug}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecciona un curso" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {courses.map((c) => (
+                        <SelectItem key={c.slug} value={c.slug}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground">Nombre de la sección</label>
+                  <Input
+                    value={newSectionName}
+                    onChange={(e) => setNewSectionName(e.target.value)}
+                    placeholder="Ej. Sección A"
+                  />
+                </div>
+                {user?.role === 'admin' ? (
+                  <div>
+                    <label className="text-sm text-muted-foreground">Profesor</label>
+                    <Select
+                      value={selectedTeacherId?.toString()}
+                      onValueChange={(v) => setSelectedTeacherId(Number(v))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecciona un profesor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teachers.map((t) => (
+                          <SelectItem key={t.userId} value={t.userId.toString()}>
+                            {t.firstName} {t.lastName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : null}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setCreating(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleCreateSection}
+                  disabled={!newSectionName.trim() || !selectedCourseSlug || !selectedTeacherId}
+                >
+                  Crear
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </>
   )

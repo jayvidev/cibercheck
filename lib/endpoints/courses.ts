@@ -22,6 +22,14 @@ export async function getCourseSections<T = unknown>(
   return fetchJson<T>({ path: `/api/v1/courses/${courseSlug}/sections`, schema })
 }
 
+export async function getCourseById<T = unknown>(id: number | string, schema?: Schema<T>): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/courses/${id}`, schema })
+}
+
+export async function getCourseBySlug<T = unknown>(slug: string, schema?: Schema<T>): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/courses/${slug}`, schema })
+}
+
 export async function updateCourse<T = unknown>(
   courseId: number | string,
   body: CourseUpdatePayload,

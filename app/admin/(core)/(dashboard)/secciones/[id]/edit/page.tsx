@@ -9,6 +9,9 @@ import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { listCourses } from '@/lib/endpoints/courses'
+import { listUsers } from '@/lib/endpoints/users'
 import { getSection, updateSection } from '@/lib/endpoints/sections'
 
 interface SectionDto {
@@ -26,12 +29,20 @@ export default function Page({ params }: { params: { id: string } }) {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [form, setForm] = React.useState<SectionDto | null>(null)
+  const [courses, setCourses] = React.useState<{ courseId: number; name: string }[]>([])
+  const [teachers, setTeachers] = React.useState<{ userId: number; firstName: string; lastName: string }[]>([])
 
   React.useEffect(() => {
     ;(async () => {
       try {
-        const data = await getSection<SectionDto>(id)
+        const [data, courseList, users] = await Promise.all([
+          getSection<SectionDto>(id),
+          listCourses<any[]>(),
+          listUsers<any[]>(),
+        ])
         setForm(data)
+        setCourses((courseList || []).map((c) => ({ courseId: c.courseId, name: c.name })))
+        setTeachers((users || []).filter((u) => u.role === 'profesor'))
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')
       } finally {
@@ -93,22 +104,40 @@ export default function Page({ params }: { params: { id: string } }) {
             />
           </div>
           <div>
-            <Label htmlFor="courseId">Curso (ID)</Label>
-            <Input
-              id="courseId"
-              type="number"
-              value={form.courseId}
-              onChange={(e) => setForm({ ...form, courseId: Number(e.target.value) })}
-            />
+            <Label>Curso</Label>
+            <Select
+              value={form.courseId?.toString()}
+              onValueChange={(v) => setForm({ ...form, courseId: Number(v) })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona un curso" />
+              </SelectTrigger>
+              <SelectContent>
+                {courses.map((c) => (
+                  <SelectItem key={c.courseId} value={c.courseId.toString()}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
-            <Label htmlFor="teacherId">Profesor (ID)</Label>
-            <Input
-              id="teacherId"
-              type="number"
-              value={form.teacherId}
-              onChange={(e) => setForm({ ...form, teacherId: Number(e.target.value) })}
-            />
+            <Label>Profesor</Label>
+            <Select
+              value={form.teacherId?.toString()}
+              onValueChange={(v) => setForm({ ...form, teacherId: Number(v) })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona un profesor" />
+              </SelectTrigger>
+              <SelectContent>
+                {teachers.map((t) => (
+                  <SelectItem key={t.userId} value={t.userId.toString()}>
+                    {t.firstName} {t.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="flex gap-2">
