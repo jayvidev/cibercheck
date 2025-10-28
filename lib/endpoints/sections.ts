@@ -55,3 +55,36 @@ export async function getSectionsByCourse<T = unknown>(
 ): Promise<T> {
   return fetchJson<T>({ path: `/api/v1/sections/course/${courseSlug}`, schema })
 }
+
+// --- Matrícula endpoints ---
+export async function getStudentEnrollments<T = unknown>(
+  studentId: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/sections/student/${studentId}`, schema })
+}
+
+export async function enrollStudent<T = unknown>(
+  sectionId: number | string,
+  studentId: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/sections/${sectionId}/enroll`,
+    method: 'POST',
+    body: { studentId: Number(studentId) },
+    schema,
+  })
+}
+
+export async function unenrollStudent<T = unknown>(
+  sectionId: number | string,
+  studentId: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/sections/${sectionId}/enroll/${studentId}`,
+    method: 'DELETE',
+    schema,
+  })
+}

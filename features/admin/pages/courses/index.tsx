@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 // API endpoints
 import { createCourse, getCourseSections, listCourses, updateCourse } from '@/lib/endpoints/courses'
+import { alertError, alertSuccess } from '@/lib/alerts'
 
 import { columns as buildColumns } from './columns'
 import { CategoryList, categoryListSchema } from './list.schema'
@@ -114,8 +115,11 @@ export function CategoriesPage({ title }: Props) {
       // Update local state
       setData((prev) => prev.map((c) => (c.courseId === editCourse.courseId ? editCourse : c)))
       setEditOpen(false)
+      await alertSuccess('Curso actualizado', 'Los cambios se guardaron correctamente.')
     } catch (e) {
-      setEditError(e instanceof Error ? e.message : 'Unknown error')
+      const msg = e instanceof Error ? e.message : 'No se pudo actualizar el curso'
+      setEditError(msg)
+      await alertError(msg)
     } finally {
       setEditSaving(false)
     }
@@ -138,8 +142,11 @@ export function CategoriesPage({ title }: Props) {
       // prepend new course
       setData((prev) => [created, ...prev])
       setCreateOpen(false)
+      await alertSuccess('Curso creado', 'El curso se creó correctamente.')
     } catch (e) {
-      setCreateError(e instanceof Error ? e.message : 'Unknown error')
+      const msg = e instanceof Error ? e.message : 'No se pudo crear el curso'
+      setCreateError(msg)
+      await alertError(msg)
     } finally {
       setCreateSaving(false)
     }

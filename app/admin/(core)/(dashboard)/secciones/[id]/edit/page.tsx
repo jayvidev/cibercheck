@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 
@@ -28,8 +28,9 @@ interface SectionDto {
   slug: string
 }
 
-export default function Page({ params }: { params: { id: string } }) {
-  const id = Number(params.id)
+export default function Page() {
+  const { id: idParam } = useParams<{ id: string }>()
+  const id = Number(idParam)
   const router = useRouter()
 
   const [loading, setLoading] = React.useState(true)
@@ -64,14 +65,19 @@ export default function Page({ params }: { params: { id: string } }) {
     if (!form) return
     try {
       setLoading(true)
-      await updateSection(id, {
-        courseId: form.courseId,
-        teacherId: form.teacherId,
-        name: form.name,
-      })
+      // Validar payload para no enviar undefined
+      const payload = {
+        courseId: Number(form.courseId),
+        teacherId: Number(form.teacherId),
+        name: String(form.name || '').trim(),
+      }
+      if (!payload.name || !payload.courseId || !payload.teacherId) {
+        throw new Error('Completa nombre, curso y profesor antes de guardar')
+      }
+      await updateSection(id, payload)
       router.push(`/admin/secciones/${id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(err instanceof Error ? err.message : 'No se pudo actualizar la sección')
     } finally {
       setLoading(false)
     }

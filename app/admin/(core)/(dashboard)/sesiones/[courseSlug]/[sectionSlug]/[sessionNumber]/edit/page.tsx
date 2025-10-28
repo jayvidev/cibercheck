@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { getSessionBySlugsNumber, updateSession } from '@/lib/endpoints/sessions'
+import { alertError, alertSuccess } from '@/lib/alerts'
 
 interface SessionEditForm {
   sessionId: number
@@ -43,13 +44,22 @@ export default function Page({
           Number(sessionNumber)
         )
         // dto es SessionDto: { sessionId, sectionId, sessionNumber, date, startTime, endTime, topic }
+        const toHHmm = (t: string | null | undefined): string | null => {
+          if (!t) return null
+          // Acepta HH:mm o HH:mm:ss y devuelve HH:mm
+          const m = String(t).match(/^([0-1]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/)
+          if (!m) return null
+          const hh = m[1].padStart(2, '0')
+          const mm = m[2].padStart(2, '0')
+          return `${hh}:${mm}`
+        }
         setForm({
           sessionId: dto.sessionId,
           sectionId: dto.sectionId,
           sessionNumber: dto.sessionNumber,
           date: typeof dto.date === 'string' ? dto.date : String(dto.date),
-          startTime: dto.startTime ?? null,
-          endTime: dto.endTime ?? null,
+          startTime: toHHmm(dto.startTime),
+          endTime: toHHmm(dto.endTime),
           topic: dto.topic ?? null,
         })
       } catch (err) {
@@ -73,14 +83,34 @@ export default function Page({
         endTime: padTime(form.endTime),
         topic: form.topic || undefined,
       })
+      await alertSuccess('Sesión actualizada', 'Los cambios se guardaron correctamente.')
       // Ir al detalle
       router.push(`/admin/sesiones/${courseSlug}/${sectionSlug}/${form.sessionNumber}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar la sesión')
+      const msg = err instanceof Error ? err.message : 'No se pudo actualizar la sesión'
+      setError(msg)
+      await alertError(msg)
     } finally {
       setLoading(false)
     }
   }
+
+  const timeIsValid = (t: string | null) => {
+    if (!t) return true
+    return /^([0-1]?\d|2[0-3]):([0-5]?\d)$/.test(t)
+  }
+
+  const startValid = timeIsValid(form?.startTime ?? null)
+  const endValid = timeIsValid(form?.endTime ?? null)
+  const orderValid = React.useMemo(() => {
+    if (!form?.startTime || !form?.endTime) return true
+    if (!startValid || !endValid) return false
+    const toMinutes = (t: string) => {
+      const [h, m] = t.split(':').map((n) => parseInt(n, 10))
+      return h * 60 + m
+    }
+    return toMinutes(form.startTime) < toMinutes(form.endTime)
+  }, [form?.startTime, form?.endTime, startValid, endValid])
 
   if (loading && !form) {
     return (
@@ -112,6 +142,7 @@ export default function Page({
             <Label htmlFor="date">Fecha</Label>
             <Input
               id="date"
+              type="date"
               value={form.date}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
             />
@@ -120,7 +151,10 @@ export default function Page({
             <Label htmlFor="startTime">Inicio</Label>
             <Input
               id="startTime"
+              type="time"
+              step={60}
               value={form.startTime ?? ''}
+              aria-invalid={!startValid}
               onChange={(e) => setForm({ ...form, startTime: e.target.value })}
             />
           </div>
@@ -128,9 +162,15 @@ export default function Page({
             <Label htmlFor="endTime">Fin</Label>
             <Input
               id="endTime"
+              type="time"
+              step={60}
               value={form.endTime ?? ''}
+              aria-invalid={!endValid || !orderValid}
               onChange={(e) => setForm({ ...form, endTime: e.target.value })}
             />
+            {!orderValid ? (
+              <p className="text-xs text-destructive mt-1">El inicio debe ser menor que el fin.</p>
+            ) : null}
           </div>
           <div className="md:col-span-2">
             <Label htmlFor="topic">Tópico</Label>
@@ -142,7 +182,17 @@ export default function Page({
           </div>
         </div>
         <div className="flex gap-2">
-          <Button type="submit" disabled={loading || !form.date || !form.sessionNumber}>
+          <Button
+            type="submit"
+            disabled={
+              loading ||
+              !form.date ||
+              !form.sessionNumber ||
+              !startValid ||
+              !endValid ||
+              !orderValid
+            }
+          >
             Guardar
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
