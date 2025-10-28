@@ -60,6 +60,7 @@ export async function createSession<T = unknown>(
   schema?: Schema<T>
 ): Promise<T> {
   return fetchJson<T>({ path: `/api/v1/sessions`, method: 'POST', body, schema })
+}
 export async function getAttendanceBySession<T = unknown>(
   courseSlug: string,
   sectionSlug: string,

@@ -48,6 +48,7 @@ export async function createSectionForCourse<T = unknown>(
     body,
     schema,
   })
+}
 export async function getSectionsByCourse<T = unknown>(
   courseSlug: string,
   schema?: Schema<T>
