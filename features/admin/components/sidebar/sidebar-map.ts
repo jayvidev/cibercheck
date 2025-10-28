@@ -3,6 +3,7 @@ import {
   Calendar1,
   ChartColumnBig,
   CheckCircle,
+  GraduationCap,
   CircleQuestionMark,
   Layers,
   Settings,
@@ -28,6 +29,7 @@ setSidebar('/admin', { icon: ChartColumnBig, group: 'inicio' })
 setSidebar('/admin/cursos', { icon: BookOpen, group: 'principal' })
 setSidebar('/admin/secciones', { icon: Layers, group: 'principal' })
 setSidebar('/admin/sesiones', { icon: Calendar1, group: 'principal' })
+setSidebar('/admin/matricula', { icon: GraduationCap, group: 'principal' })
 setSidebar('/admin/asistencia', { icon: CheckCircle, group: 'principal' })
 setSidebar('/admin/usuarios', { icon: Users, group: 'principal' })
 

@@ -26,6 +26,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 // API endpoints
 import { createUser, listUsers, updateUser } from '@/lib/endpoints/users'
+import { alertError, alertSuccess } from '@/lib/alerts'
 
 import { columns as buildColumns } from './columns'
 import { type UserList, userListSchema } from './list.schema'
@@ -128,8 +129,11 @@ export function UsersPage({ title }: Props) {
       })
       setData((prev) => prev.map((u) => (u.userId === editUser.userId ? editUser : u)))
       setEditOpen(false)
+      await alertSuccess('Usuario actualizado', 'Los cambios se guardaron correctamente.')
     } catch (e) {
-      setEditError(e instanceof Error ? e.message : 'Unknown error')
+      const msg = e instanceof Error ? e.message : 'No se pudo actualizar el usuario'
+      setEditError(msg)
+      await alertError(msg)
     } finally {
       setEditSaving(false)
     }
@@ -158,8 +162,11 @@ export function UsersPage({ title }: Props) {
       })
       setData((prev) => [created, ...prev])
       setCreateOpen(false)
+      await alertSuccess('Usuario creado', 'El usuario se creó correctamente.')
     } catch (e) {
-      setCreateError(e instanceof Error ? e.message : 'Unknown error')
+      const msg = e instanceof Error ? e.message : 'No se pudo crear el usuario'
+      setCreateError(msg)
+      await alertError(msg)
     } finally {
       setCreateSaving(false)
     }

@@ -19,6 +19,7 @@ import {
   createSectionForCourse,
   getSectionsByCourseSlug,
   getSectionsStatsByCourseSlug,
+  updateSection,
 } from '@/lib/endpoints/sections'
 import { listUsers } from '@/lib/endpoints/users'
 
@@ -36,6 +37,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { alertError, alertSuccess } from '@/lib/alerts'
 
 interface Props {
   title: string
@@ -54,6 +56,18 @@ export function SectionsPage({ title }: Props) {
     { userId: number; firstName: string; lastName: string }[]
   >([])
   const { user } = useAuth()
+
+  // Modales Detalles/Editar
+  const [detailsOpen, setDetailsOpen] = React.useState(false)
+  const [detailsItem, setDetailsItem] = React.useState<SectionList | null>(null)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [editError, setEditError] = React.useState<string | null>(null)
+  const [editItem, setEditItem] = React.useState<{
+    sectionId: number
+    name: string
+    courseSlug: string
+    teacherId: number | null
+  } | null>(null)
 
   // Helper para sugerir el nombre de la sección con letras estilo "Sección A", "Sección B", ...
   function getNextSectionLabel(existingNames: string[]): string {
@@ -161,7 +175,26 @@ export function SectionsPage({ title }: Props) {
     if (!newSectionName) setNewSectionName(suggestion)
   }, [creating, data, newSectionName])
 
-  const columns = React.useMemo(() => buildColumns('/admin/secciones'), [])
+  const columns = React.useMemo(
+    () =>
+      buildColumns({
+        onDetails: (row) => {
+          setDetailsItem(row)
+          setDetailsOpen(true)
+        },
+        onEdit: (row) => {
+          setEditError(null)
+          setEditItem({
+            sectionId: row.sectionId,
+            name: row.name,
+            courseSlug: row.courseSlug || selectedCourseSlug || '',
+            teacherId: row.teacherId || null,
+          })
+          setEditOpen(true)
+        },
+      }),
+    [selectedCourseSlug]
+  )
 
   if (loading && data.length === 0) {
     return (
@@ -187,6 +220,7 @@ export function SectionsPage({ title }: Props) {
         teacherId: selectedTeacherId,
       })
       setCreating(false)
+      await alertSuccess('Sección creada', 'La sección se creó correctamente.')
       setNewSectionName('')
       // refrescar
       const res = await getSectionsStatsByCourseSlug<any>(selectedCourseSlug)
@@ -203,7 +237,9 @@ export function SectionsPage({ title }: Props) {
       const parsed = sectionListSchema.array().parse(sections)
       setData(parsed)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear la sección')
+      const msg = err instanceof Error ? err.message : 'No se pudo crear la sección'
+      setError(msg)
+      await alertError(msg)
     } finally {
       setLoading(false)
     }
@@ -242,6 +278,163 @@ export function SectionsPage({ title }: Props) {
             description="Secciones por curso."
             onAdd={() => setCreating(true)}
           />
+          {/* Modal Detalles */}
+          <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Detalle de sección</DialogTitle>
+              </DialogHeader>
+              {detailsItem ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">ID</p>
+                    <p className="font-mono">{detailsItem.sectionId}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Slug</p>
+                    <p className="font-mono text-sm">{detailsItem.slug}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-muted-foreground">Nombre</p>
+                    <p className="font-medium">{detailsItem.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Curso</p>
+                    <p className="font-medium">
+                      {detailsItem.courseName ?? detailsItem.courseSlug}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Profesor</p>
+                    <p className="font-medium">
+                      {(() => {
+                        const t = teachers.find((x) => x.userId === detailsItem.teacherId)
+                        return t ? `${t.firstName} ${t.lastName}` : `ID ${detailsItem.teacherId}`
+                      })()}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </DialogContent>
+          </Dialog>
+
+          {/* Modal Editar */}
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar sección</DialogTitle>
+              </DialogHeader>
+              {editError ? <p className="text-sm text-destructive">{editError}</p> : null}
+              {editItem ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm text-muted-foreground">Curso</label>
+                    <Select
+                      value={editItem.courseSlug}
+                      onValueChange={(v) => setEditItem({ ...editItem, courseSlug: v })}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecciona un curso" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courses.map((c) => (
+                          <SelectItem key={c.slug} value={c.slug}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Nombre</label>
+                    <Input
+                      value={editItem.name}
+                      onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
+                    />
+                  </div>
+                  {user?.role === 'admin' ? (
+                    <div>
+                      <label className="text-sm text-muted-foreground">Profesor</label>
+                      <Select
+                        value={editItem.teacherId?.toString() ?? undefined}
+                        onValueChange={(v) => setEditItem({ ...editItem, teacherId: Number(v) })}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecciona un profesor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teachers.map((t) => (
+                            <SelectItem key={t.userId} value={t.userId.toString()}>
+                              {t.firstName} {t.lastName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : null}
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setEditOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          if (!editItem?.name.trim()) {
+                            setEditError('El nombre es requerido')
+                            return
+                          }
+                          const course = courses.find((c) => c.slug === editItem.courseSlug)
+                          const courseId = course?.courseId
+                          const teacherId =
+                            user?.role === 'admin' ? editItem.teacherId : user?.userId
+                          if (!courseId || !teacherId) {
+                            setEditError('Curso o profesor no válidos')
+                            return
+                          }
+                          await updateSection(editItem.sectionId, {
+                            name: editItem.name.trim(),
+                            courseId,
+                            teacherId,
+                          })
+                          setEditOpen(false)
+                          await alertSuccess(
+                            'Sección actualizada',
+                            'Los cambios se guardaron correctamente.'
+                          )
+                          // refrescar lista actual
+                          if (selectedCourseSlug) {
+                            setLoading(true)
+                            const res = await getSectionsStatsByCourseSlug<any>(selectedCourseSlug)
+                            const sections = (res?.sections ?? []).map((s: any) => ({
+                              sectionId: s.sectionId,
+                              name: s.name,
+                              slug: s.slug,
+                              teacherId: s.teacherId,
+                              courseName: s.courseName ?? res?.courseName,
+                              courseSlug: s.courseSlug ?? res?.courseSlug,
+                              studentsCount: s.studentsCount,
+                              sessionsCount: s.sessionsCount,
+                            }))
+                            const parsed = sectionListSchema.array().parse(sections)
+                            setData(parsed)
+                            setLoading(false)
+                          }
+                        } catch (err) {
+                          const msg =
+                            err instanceof Error ? err.message : 'No se pudo actualizar la sección'
+                          setEditError(msg)
+                          await alertError(msg)
+                        }
+                      }}
+                      disabled={!editItem.name.trim()}
+                    >
+                      Guardar
+                    </Button>
+                  </DialogFooter>
+                </div>
+              ) : null}
+            </DialogContent>
+          </Dialog>
           <Dialog open={creating} onOpenChange={setCreating}>
             <DialogContent>
               <DialogHeader>
