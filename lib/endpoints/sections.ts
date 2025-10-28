@@ -29,3 +29,10 @@ export async function updateSection<T = unknown>(
 ): Promise<T> {
   return fetchJson<T>({ path: `/api/v1/sections/${sectionId}`, method: 'PUT', body, schema })
 }
+
+export async function getSectionsByCourse<T = unknown>(
+  courseSlug: string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/sections/course/${courseSlug}`, schema })
+}

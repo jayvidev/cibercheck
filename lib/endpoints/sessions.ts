@@ -33,3 +33,53 @@ export async function updateSession<T = unknown>(
 ): Promise<T> {
   return fetchJson<T>({ path: `/api/v1/sessions/${sessionId}`, method: 'PUT', body, schema })
 }
+
+export async function getAttendanceBySession<T = unknown>(
+  courseSlug: string,
+  sectionSlug: string,
+  sessionNumber: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/attendances/course/${courseSlug}/section/${sectionSlug}/session/${sessionNumber}`,
+    schema,
+  })
+}
+
+export async function generateQRToken<T = unknown>(
+  courseSlug: string,
+  sectionSlug: string,
+  sessionNumber: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/attendances/qr/course/${courseSlug}/section/${sectionSlug}/session/${sessionNumber}/generate`,
+    method: 'POST',
+    schema,
+  })
+}
+
+export async function regenerateQRToken<T = unknown>(
+  courseSlug: string,
+  sectionSlug: string,
+  sessionNumber: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/attendances/qr/course/${courseSlug}/section/${sectionSlug}/session/${sessionNumber}/regenerate`,
+    method: 'POST',
+    schema,
+  })
+}
+
+export async function getCurrentQRToken<T = unknown>(
+  courseSlug: string,
+  sectionSlug: string,
+  sessionNumber: number | string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/attendances/qr/course/${courseSlug}/section/${sectionSlug}/session/${sessionNumber}/current`,
+    schema,
+  })
+}

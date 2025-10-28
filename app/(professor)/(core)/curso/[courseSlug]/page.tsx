@@ -2,7 +2,16 @@ import type { Metadata } from 'next'
 
 import { CourseSectionsPage } from '@professor/pages/course-sections'
 
-import coursesData from '@/mocks/professor/courses.json'
+import { getUserFromCookie } from '@/features/professor/pages/home'
+import { listCoursesByTeacher } from '@/lib/endpoints/courses'
+
+interface Course {
+  courseSlug: string
+  code: string
+  name: string
+  totalSections: number
+  color: string
+}
 
 export async function generateMetadata({
   params,
@@ -10,10 +19,25 @@ export async function generateMetadata({
   params: Promise<{ courseSlug: string }>
 }): Promise<Metadata> {
   const { courseSlug } = await params
-  const course = coursesData.find((c) => c.courseSlug === courseSlug)
 
-  return {
-    title: course ? course.name : 'Curso',
+  try {
+    const user = await getUserFromCookie()
+    if (!user) {
+      return {
+        title: 'Curso',
+      }
+    }
+
+    const courses = (await listCoursesByTeacher(user.userId)) as Course[]
+    const course = courses.find((c) => c.courseSlug === courseSlug)
+
+    return {
+      title: course ? course.name : 'Curso',
+    }
+  } catch {
+    return {
+      title: 'Curso',
+    }
   }
 }
 

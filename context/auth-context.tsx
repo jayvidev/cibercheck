@@ -47,11 +47,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const { token: newToken, user: userData } = response
 
-      // Guardar token en cookie
+      // Guardar token en cookie (cliente)
       setCookie(AUTH_COOKIE_NAME, newToken)
 
       // Guardar usuario en localStorage
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData))
+
+      // Guardar cookies en el servidor también
+      try {
+        await saveCookieToServer(AUTH_COOKIE_NAME, newToken)
+        await saveCookieToServer(USER_STORAGE_KEY, JSON.stringify(userData))
+      } catch (error) {
+        console.warn('Error saving cookies to server:', error)
+        // Continuar aunque falle guardar en servidor
+      }
 
       setToken(newToken)
       setUser(userData)
@@ -126,4 +135,21 @@ function deleteCookie(name: string): void {
     parts.push('Secure')
   }
   document.cookie = parts.join('; ')
+}
+
+async function saveCookieToServer(name: string, value: string): Promise<void> {
+  try {
+    const response = await fetch('/api/auth/set-cookie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, value }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to save cookie to server')
+    }
+  } catch (error) {
+    console.error('Error saving cookie to server:', error)
+    throw error
+  }
 }

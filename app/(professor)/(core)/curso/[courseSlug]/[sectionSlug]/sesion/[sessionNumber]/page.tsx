@@ -2,8 +2,12 @@ import type { Metadata } from 'next'
 
 import { SessionAttendancePage } from '@professor/pages/session-attendance'
 
-import courseSectionDetail from '@/mocks/professor/attendance.json'
-import sessionsData from '@/mocks/professor/sessions.json'
+import { getUserFromCookie } from '@/features/professor/pages/home'
+import { getAttendanceBySession } from '@/lib/endpoints/sessions'
+
+interface Attendance {
+  courseName: string
+}
 
 export async function generateMetadata({
   params,
@@ -12,23 +16,27 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { courseSlug, sectionSlug, sessionNumber } = await params
 
-  const course = courseSectionDetail
-
-  const session = sessionsData.find(
-    (s) =>
-      s.courseSlug === courseSlug &&
-      s.sectionSlug === sectionSlug &&
-      s.sessionNumber === parseInt(sessionNumber)
-  )
-
-  if (course && session) {
-    return {
-      title: `${session.topic} - ${course.courseName}`,
+  try {
+    const user = await getUserFromCookie()
+    if (!user) {
+      return {
+        title: 'Sesión',
+      }
     }
-  }
 
-  return {
-    title: 'Sesión',
+    const attendance = (await getAttendanceBySession(
+      courseSlug,
+      sectionSlug,
+      sessionNumber
+    )) as Attendance
+
+    return {
+      title: `Sesión ${sessionNumber} - ${attendance.courseName}`,
+    }
+  } catch {
+    return {
+      title: 'Sesión',
+    }
   }
 }
 
