@@ -9,9 +9,29 @@ import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import courseSectionDetail from '@/mocks/professor/attendance.json'
-import coursesData from '@/mocks/professor/courses.json'
-import sessionsData from '@/mocks/professor/sessions.json'
+import { Skeleton } from '@/components/ui/skeleton'
+
+interface Session {
+  courseSlug: string
+  sectionSlug: string
+  sessionNumber: number
+  date: string
+  startTime: string
+  endTime: string
+  topic: string
+  attendanceStats: {
+    presente: number
+    ausente: number
+    tarde: number
+    justificado: number
+  }
+}
+
+interface Course {
+  name: string
+  code: string
+  color: string
+}
 
 interface SessionCardProps {
   sessionNumber: string
@@ -152,11 +172,59 @@ function SessionListItem({
   )
 }
 
+function SessionSkeletonCard() {
+  return (
+    <Card className="overflow-hidden h-full">
+      <CardHeader className="pb-3">
+        <Skeleton className="h-5 w-20 mb-2" />
+        <Skeleton className="h-6 w-3/4" />
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+        <div className="pt-2 border-t">
+          <Skeleton className="h-4 w-20 mb-2" />
+          <div className="flex gap-3">
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-12" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function SessionSkeletonListItem() {
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-lg border bg-card p-4 mb-3">
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-20" />
+        <Skeleton className="h-6 w-3/4" />
+        <div className="flex flex-wrap gap-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+      </div>
+      <div className="flex gap-4">
+        <Skeleton className="h-4 w-12" />
+        <Skeleton className="h-4 w-12" />
+        <Skeleton className="h-4 w-12" />
+      </div>
+    </div>
+  )
+}
+
 interface SectionSessionsContentProps {
   courseSlug: string
   sectionSlug: string
   currentViewMode: 'grid' | 'list'
   setViewModeCookie: (viewMode: 'grid' | 'list') => Promise<void>
+  sessions: Session[]
+  courseData: Course | null
+  isLoading?: boolean
 }
 
 export function SectionSessionsContent({
@@ -164,25 +232,22 @@ export function SectionSessionsContent({
   sectionSlug,
   currentViewMode,
   setViewModeCookie,
+  sessions,
+  courseData,
+  isLoading = false,
 }: SectionSessionsContentProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(currentViewMode)
-
-  const course = courseSectionDetail
-  const sessions = sessionsData.filter(
-    (s) => s.courseSlug === courseSlug && s.sectionSlug === sectionSlug
-  )
 
   const handleViewModeChange = async (newViewMode: 'grid' | 'list') => {
     setViewMode(newViewMode)
     await setViewModeCookie(newViewMode)
   }
 
-  if (!course) {
+  if (!courseData) {
     return <p>Curso no encontrado</p>
   }
 
-  const courseData = coursesData.find((c) => c.courseSlug === courseSlug)
-  const courseColor = courseData?.color || '#3b82f6'
+  const courseColor = courseData.color || '#3b82f6'
 
   return (
     <>
@@ -197,9 +262,9 @@ export function SectionSessionsContent({
         <div className="flex items-start gap-4">
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight text-balance">{course.courseName}</h1>
-            <p className="text-sm text-muted-foreground mt-2">{course.sectionName}</p>
-            <p className="text-sm font-mono text-muted-foreground mt-1">{course.courseCode}</p>
+            <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
+            <p className="text-sm text-muted-foreground mt-2">{sectionSlug}</p>
+            <p className="text-sm font-mono text-muted-foreground mt-1">{courseData.code}</p>
           </div>
         </div>
       </div>
@@ -213,7 +278,21 @@ export function SectionSessionsContent({
         />
       </div>
 
-      {sessions.length > 0 ? (
+      {isLoading ? (
+        viewMode === 'grid' ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SessionSkeletonCard key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SessionSkeletonListItem key={i} />
+            ))}
+          </div>
+        )
+      ) : sessions.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {sessions.map((session) => (

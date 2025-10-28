@@ -28,7 +28,7 @@ interface Student {
   id: string
   name: string
   studentId: string
-  attendance: 'asistio' | 'falto' | 'tardanza'
+  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado'
 }
 
 interface AttendanceTableProps {
@@ -51,7 +51,10 @@ export function AttendanceTable({
   const [students, setStudents] = useState(initialStudents)
   const [qrModalOpen, setQrModalOpen] = useState(false)
 
-  const updateAttendance = (studentId: string, status: 'asistio' | 'falto' | 'tardanza') => {
+  const updateAttendance = (
+    studentId: string,
+    status: 'asistio' | 'falto' | 'tardanza' | 'justificado'
+  ) => {
     setStudents(students.map((s) => (s.id === studentId ? { ...s, attendance: status } : s)))
   }
 
@@ -63,6 +66,8 @@ export function AttendanceTable({
         return <Badge variant="destructive">Faltó</Badge>
       case 'tardanza':
         return <Badge className="bg-yellow-600 hover:bg-yellow-700">Tardanza</Badge>
+      case 'justificado':
+        return <Badge className="bg-blue-600 hover:bg-blue-700">Justificado</Badge>
       default:
         return null
     }
@@ -73,6 +78,7 @@ export function AttendanceTable({
     asistio: students.filter((s) => s.attendance === 'asistio').length,
     falto: students.filter((s) => s.attendance === 'falto').length,
     tardanza: students.filter((s) => s.attendance === 'tardanza').length,
+    justificado: students.filter((s) => s.attendance === 'justificado').length,
   }
 
   return (
@@ -88,7 +94,7 @@ export function AttendanceTable({
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-5">
         <div className="rounded-lg border bg-card p-4">
           <p className="text-sm text-muted-foreground">Total</p>
           <p className="text-2xl font-bold">{stats.total}</p>
@@ -104,6 +110,10 @@ export function AttendanceTable({
         <div className="rounded-lg border bg-card p-4">
           <p className="text-sm text-muted-foreground">Tardanzas</p>
           <p className="text-2xl font-bold text-yellow-600">{stats.tardanza}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-4">
+          <p className="text-sm text-muted-foreground">Justificados</p>
+          <p className="text-2xl font-bold text-blue-600">{stats.justificado}</p>
         </div>
       </div>
 
@@ -127,7 +137,10 @@ export function AttendanceTable({
                   <Select
                     value={student.attendance}
                     onValueChange={(value) =>
-                      updateAttendance(student.id, value as 'asistio' | 'falto' | 'tardanza')
+                      updateAttendance(
+                        student.id,
+                        value as 'asistio' | 'falto' | 'tardanza' | 'justificado'
+                      )
                     }
                   >
                     <SelectTrigger className="w-[140px]">
@@ -137,6 +150,7 @@ export function AttendanceTable({
                       <SelectItem value="asistio">Asistió</SelectItem>
                       <SelectItem value="tardanza">Tardanza</SelectItem>
                       <SelectItem value="falto">Faltó</SelectItem>
+                      <SelectItem value="justificado">Justificado</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>

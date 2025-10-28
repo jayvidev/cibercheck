@@ -48,4 +48,9 @@ export async function createSectionForCourse<T = unknown>(
     body,
     schema,
   })
+export async function getSectionsByCourse<T = unknown>(
+  courseSlug: string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/sections/course/${courseSlug}`, schema })
 }

@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface Course {
   id: string
@@ -102,12 +103,46 @@ interface HomePageContentProps {
   courses: Course[]
   currentViewMode: 'grid' | 'list'
   setViewModeCookie: (viewMode: 'grid' | 'list') => Promise<void>
+  isLoading?: boolean
+}
+
+function CourseSkeletonCard() {
+  return (
+    <Card className="overflow-hidden h-full py-0">
+      <div className="flex h-full">
+        <Skeleton className="w-1" />
+        <CardContent className="flex-1 p-6 flex flex-col justify-between">
+          <div>
+            <Skeleton className="h-10 w-10 mb-3 rounded-lg" />
+            <Skeleton className="h-5 w-16 mb-2" />
+            <Skeleton className="h-6 w-3/4 mb-2" />
+          </div>
+          <Skeleton className="h-4 w-24" />
+        </CardContent>
+      </div>
+    </Card>
+  )
+}
+
+function CourseSkeletonListItem() {
+  return (
+    <div className="flex items-center gap-4 rounded-lg border bg-card p-4 mb-3">
+      <Skeleton className="h-16 w-1 rounded-full" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-5 w-1/2" />
+        <Skeleton className="h-4 w-32" />
+      </div>
+      <Skeleton className="h-10 w-10 rounded" />
+    </div>
+  )
 }
 
 export function HomePageContent({
   courses,
   currentViewMode,
   setViewModeCookie,
+  isLoading = false,
 }: HomePageContentProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(currentViewMode)
@@ -192,7 +227,21 @@ export function HomePageContent({
         </p>
       </div>
 
-      {filteredCourses.length > 0 ? (
+      {isLoading ? (
+        viewMode === 'grid' ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CourseSkeletonCard key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CourseSkeletonListItem key={i} />
+            ))}
+          </div>
+        )
+      ) : filteredCourses.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((course) => (
