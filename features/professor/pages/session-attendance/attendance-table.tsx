@@ -15,6 +15,7 @@ import {
   Monitor,
   QrCode as QRCode,
   RefreshCw,
+  Users,
   University,
   XCircle,
 } from 'lucide-react'
@@ -434,7 +435,7 @@ export function AttendanceTable({
   return (
     <div className="space-y-6">
       <div className="mb-8 space-y-4">
-        <div className="flex items-start gap-4">
+          <div className="flex flex-col md:flex-row md:items-start gap-4">
           <div
             className="h-16 w-1 rounded-full"
             style={{ backgroundColor: courseColor || '#3b82f6' }}
@@ -473,7 +474,7 @@ export function AttendanceTable({
               ) : null}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="mt-4 md:mt-0 flex items-center gap-2 flex-wrap">
             <Button
               onClick={handleBulkUpdate}
               variant="outline"
@@ -491,6 +492,10 @@ export function AttendanceTable({
                   {updateButtonLabel}
                 </>
               )}
+            </Button>
+            <Button variant="outline" onClick={() => setBulkDialogOpen(true)} className="gap-2">
+              <Users className="size-4" />
+              Estado masivo
             </Button>
             <Button
               onClick={() => {
@@ -556,19 +561,7 @@ export function AttendanceTable({
         </>
       ) : (
         <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={() => setBulkDialogOpen(true)}>
-                Estado masivo
-              </Button>
-              {bulkStatus ? (
-                <span className="text-sm text-muted-foreground">
-                  Seleccionado: <strong>{statusLabel(bulkStatus)}</strong>
-                </span>
-              ) : null}
-            </div>
-            <div />
-          </div>
+          {/* bulk button moved to header for compact layout */}
 
           <DataTable columns={columns} data={students} resource="attendance" clean />
         </>
