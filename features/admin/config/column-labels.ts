@@ -30,6 +30,12 @@ export const columnLabelsByResource: Record<string, Record<string, string>> = {
     email: 'Correo',
     role: 'Rol',
   },
+  attendance: {
+    firstName: 'Nombre',
+    lastName: 'Apellido',
+    email: 'Correo',
+    status: 'Estado',
+  },
 }
 
 export function getColumnLabel(resource: string | undefined, columnId: string): string {

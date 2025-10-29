@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import type { ColumnDef } from '@tanstack/react-table'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import {
@@ -18,20 +19,15 @@ import {
   XCircle,
 } from 'lucide-react'
 
+import { DataTable } from '@admin/components/data-table'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { bulkMarkAttendance, getAttendanceBySession } from '@/lib/endpoints/sessions'
+import { withMetaLabelHeader } from '@/lib/with-meta-label-header'
 
 import { QRModal } from './qr-modal'
 
@@ -363,6 +359,48 @@ export function AttendanceTable({
       color: 'text-gray-600 dark:text-gray-400',
     },
   ]
+  const columns: ColumnDef<Student>[] = [
+    {
+      id: 'firstName',
+      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+      header: withMetaLabelHeader<Student>(),
+      meta: { searchable: true },
+      cell: ({ row }) => <span className="font-medium">{row.original.firstName}</span>,
+    },
+    {
+      id: 'lastName',
+      accessorFn: (row) => row.lastName,
+      header: withMetaLabelHeader<Student>(),
+      meta: { searchable: true },
+      cell: ({ getValue }) => <span className="font-medium">{getValue<string>()}</span>,
+    },
+    {
+      accessorKey: 'email',
+      header: withMetaLabelHeader<Student>(),
+    },
+    {
+      accessorKey: 'status',
+      header: withMetaLabelHeader<Student>(),
+      cell: ({ getValue, row }) => (
+        <Select
+          value={row.original.status}
+          onValueChange={(value) => updateStatus(row.original.id, value)}
+        >
+          <SelectTrigger className="w-[140px]">
+            <div className="flex items-center gap-2">{renderBadge(getValue<string>())}</div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="presente">{renderBadge('presente')}</SelectItem>
+            <SelectItem value="tarde">{renderBadge('tarde')}</SelectItem>
+            <SelectItem value="ausente">{renderBadge('ausente')}</SelectItem>
+            <SelectItem value="justificado">{renderBadge('justificado')}</SelectItem>
+            <SelectItem value="no_registrado">{renderBadge('no_registrado')}</SelectItem>
+          </SelectContent>
+        </Select>
+      ),
+      enableSorting: false,
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -468,72 +506,28 @@ export function AttendanceTable({
         })}
       </div>
 
-      <div className="rounded-lg border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Apellido</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Estado</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isRefreshing
-              ? // render 8 skeleton rows while refreshing
-                Array.from({ length: 8 }).map((_, i) => (
-                  <TableRow key={`skeleton-${i}`}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-36" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-48" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Skeleton className="h-8 w-20" />
-                        <Skeleton className="h-8 w-20" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              : students.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell className="font-medium">{student.firstName}</TableCell>
-                    <TableCell className="font-medium">{student.lastName}</TableCell>
-                    <TableCell className="font-medium">{student.email}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={student.status}
-                        onValueChange={(value) => updateStatus(student.id, value)}
-                      >
-                        <SelectTrigger className="w-[140px]">
-                          <div className="flex items-center gap-2">
-                            {renderBadge(student.status)}
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="presente">{renderBadge('presente')}</SelectItem>
-                          <SelectItem value="tarde">{renderBadge('tarde')}</SelectItem>
-                          <SelectItem value="ausente">{renderBadge('ausente')}</SelectItem>
-                          <SelectItem value="justificado">{renderBadge('justificado')}</SelectItem>
-                          <SelectItem value="no_registrado">
-                            {renderBadge('no_registrado')}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
-      </div>
+      {isRefreshing ? (
+        <>
+          <div className="py-2">
+            <div className="flex items-center justify-between">
+              <div className="w-1/2">
+                <Skeleton className="h-7 w-full rounded-md" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-7 w-28 rounded-md" />
+                <Skeleton className="h-7 w-12 rounded-md" />
+              </div>
+            </div>
+          </div>
+          <div className="pb-4">
+            <div className="animate-pulse flex items-center justify-center">
+              <Skeleton className="h-90 w-full rounded-md" />
+            </div>
+          </div>
+        </>
+      ) : (
+        <DataTable columns={columns} data={students} resource="attendance" clean />
+      )}
 
       <QRModal
         open={qrModalOpen}

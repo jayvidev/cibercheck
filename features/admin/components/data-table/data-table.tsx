@@ -66,6 +66,10 @@ interface DataTableProps<TData, TValue> {
   title?: string
   description?: string
   onAdd?: () => void
+  /**
+   * When true, hide title, description and the Add button. Defaults to false.
+   */
+  clean?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -75,13 +79,27 @@ export function DataTable<TData, TValue>({
   title = 'Listado',
   description = 'Esta es la información disponible en la tabla.',
   onAdd,
+  clean = false,
 }: DataTableProps<TData, TValue>) {
   const pathname = usePathname()
   const sidebarMeta = sidebarMap[pathname as keyof typeof sidebarMap]
   const Icon = sidebarMeta?.icon
 
   const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
+    const vis: VisibilityState = {}
+    try {
+      // If any incoming column has meta.hidden === true, hide it by default
+      // columns is available from props
+      ;(columns as any).forEach((c: any) => {
+        const id = c.id ?? c.accessorKey
+        if (c?.meta?.hidden && id) vis[id as string] = false
+      })
+    } catch (err) {
+      // ignore
+    }
+    return vis
+  })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
@@ -170,21 +188,24 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            {Icon && <Icon strokeWidth={2.5} />}
-            {title}
-          </h1>
-          <p className="text-muted-foreground">{description}</p>
+      {!clean && (
+        <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              {Icon && <Icon strokeWidth={2.5} />}
+              {title}
+            </h1>
+            <p className="text-muted-foreground">{description}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={onAdd}>
+              <CirclePlus />
+              Agregar
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={onAdd}>
-            <CirclePlus />
-            Agregar
-          </Button>
-        </div>
-      </div>
+      )}
+
       <div className="flex items-center space-x-2 mb-2 w-full"></div>
       <DataTableToolbar table={table} resource={resource} />
       <div className="overflow-y-auto rounded-md border">
