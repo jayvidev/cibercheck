@@ -17,7 +17,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '@/components/ui/input-group'
 import { PasswordInput } from '@/components/ui/password-input'
 import { useAuth } from '@/context/auth-context'
 import { cn } from '@/lib/utils'
@@ -64,7 +69,6 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
         console.warn('Intentando login con email:', email)
       }
       await login(email, data.password)
-      // No redirigir aquí, el useEffect lo hará
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'No se pudo iniciar sesión'
       toast.error(msg)
@@ -86,20 +90,22 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
             <FormField
               control={form.control}
               name="username"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel htmlFor="username">Usuario Cibertec</FormLabel>
                   <FormControl>
-                    <div className="flex items-center rounded-md border border-input bg-background">
-                      <Input
+                    <InputGroup>
+                      <InputGroupInput
                         id="username"
-                        placeholder="Ingresa tu usuario"
-                        className="border-0 focus-visible:ring-0"
+                        placeholder="Enter your username"
                         autoComplete="username"
                         {...field}
+                        aria-invalid={!!fieldState?.error}
                       />
-                      <span className="px-3 text-muted-foreground text-sm">{domain}</span>
-                    </div>
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>{domain}</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,7 +136,7 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
             />
 
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Iniciando…' : 'Iniciar sesión'}
+              {form.formState.isSubmitting ? 'Iniciando sesión' : 'Iniciar sesión'}
             </Button>
           </div>
         </form>
