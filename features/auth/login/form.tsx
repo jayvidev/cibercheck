@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -38,6 +38,7 @@ type LoginFormValues = z.infer<typeof loginSchema>
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter()
   const { login, isAuthenticated, user } = useAuth()
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -51,11 +52,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   useEffect(() => {
     if (isAuthenticated) {
       if (user?.role === 'profesor') {
+        setIsRedirecting(true)
         router.push('/')
       } else if (user?.role === 'estudiante') {
+        setIsRedirecting(true)
         toast.error('Los estudiantes deben ingresar por la aplicación móvil.')
         router.push('/iniciar-sesion')
       } else if (user?.role === 'administrador') {
+        setIsRedirecting(true)
         router.push('/admin')
       }
     }
@@ -74,6 +78,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
       const msg = error instanceof Error ? error.message : 'No se pudo iniciar sesión'
       toast.error(msg)
     }
+  }
+
+  const isSubmitting = form.formState.isSubmitting
+  let buttonLabel = 'Iniciar sesión'
+  if (isRedirecting) {
+    buttonLabel = 'Redirigiendo'
+  } else if (isSubmitting) {
+    buttonLabel = 'Iniciando sesión'
   }
 
   return (
@@ -136,9 +148,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting && <Spinner />}
-              {form.formState.isSubmitting ? 'Iniciando sesión' : 'Iniciar sesión'}
+            <Button type="submit" className="w-full" disabled={isSubmitting || isRedirecting}>
+              {(isSubmitting || isRedirecting) && <Spinner />}
+              {buttonLabel}
             </Button>
           </div>
         </form>
