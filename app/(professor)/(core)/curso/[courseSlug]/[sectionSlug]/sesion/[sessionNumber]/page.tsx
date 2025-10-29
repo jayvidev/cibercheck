@@ -31,7 +31,7 @@ export async function generateMetadata({
     )) as Attendance
 
     return {
-      title: `Sesión ${sessionNumber} - ${attendance.courseName}`,
+      title: `${attendance.courseName} - Sesión ${sessionNumber}`,
     }
   } catch {
     return {

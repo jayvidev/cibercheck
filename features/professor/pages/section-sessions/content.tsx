@@ -2,7 +2,18 @@
 
 import { useState } from 'react'
 
-import { AlertCircle, ArrowLeft, Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react'
+import {
+  ArrowLeft,
+  Calendar,
+  Calendar1,
+  CheckCircle2,
+  CircleDashed,
+  Clock,
+  FileText,
+  Monitor,
+  University,
+  XCircle,
+} from 'lucide-react'
 import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
@@ -78,7 +89,9 @@ function SessionCard({
       <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] h-full cursor-pointer">
         <CardHeader className="pb-3">
           <div className="space-y-2">
-            <p className="text-sm font-semibold">Sesión {number}</p>
+            <p className="text-sm font-semibold inline-flex items-center gap-1">
+              <Calendar1 className="size-4" /> Sesión {number}
+            </p>
             <h3 className="font-semibold text-lg leading-tight text-balance">{topic}</h3>
           </div>
         </CardHeader>
@@ -104,34 +117,26 @@ function SessionCard({
             <p className="text-xs font-semibold text-muted-foreground mb-2">Asistencia</p>
             <div className="flex gap-3">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                 <span className="text-sm font-medium">{attended}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <XCircle className="h-4 w-4 text-red-600" />
+                <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
                 <span className="text-sm font-medium">{absent}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-sm font-medium">{late}</span>
               </div>
-            </div>
-            {(justified > 0 || notRegistered > 0) && (
-              <div className="flex gap-3 mt-2">
-                {justified > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium">{justified}</span>
-                  </div>
-                )}
-                {notRegistered > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <XCircle className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm font-medium">{notRegistered}</span>
-                  </div>
-                )}
+              <div className="flex items-center gap-1.5">
+                <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm font-medium">{justified}</span>
               </div>
-            )}
+              <div className="flex items-center gap-1.5">
+                <CircleDashed className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                <span className="text-sm font-medium">{notRegistered}</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -158,7 +163,9 @@ function SessionListItem({
     <Link href={`/curso/${courseSlug}/${sectionSlug}/sesion/${sessionNumber}`}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-lg border bg-card p-4 mb-3 transition-all hover:shadow-md cursor-pointer">
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-semibold">Sesión {number}</p>
+          <p className="text-sm font-semibold inline-flex items-center gap-1">
+            <Calendar1 className="size-4" /> Sesión {number}
+          </p>
           <h3 className="font-semibold text-lg leading-tight text-balance">{topic}</h3>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
@@ -178,29 +185,25 @@ function SessionListItem({
 
         <div className="flex gap-2 sm:border-l sm:pl-4 flex-wrap">
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
             <span className="text-sm font-medium">{attended}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <XCircle className="h-4 w-4 text-red-600" />
+            <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
             <span className="text-sm font-medium">{absent}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <span className="text-sm font-medium">{late}</span>
           </div>
-          {justified > 0 && (
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium">{justified}</span>
-            </div>
-          )}
-          {notRegistered > 0 && (
-            <div className="flex items-center gap-1.5">
-              <XCircle className="h-4 w-4 text-gray-600" />
-              <span className="text-sm font-medium">{notRegistered}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium">{justified}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CircleDashed className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <span className="text-sm font-medium">{notRegistered}</span>
+          </div>
         </div>
       </div>
     </Link>
@@ -255,6 +258,8 @@ function SessionSkeletonListItem() {
 interface SectionSessionsContentProps {
   courseSlug: string
   sectionSlug: string
+  sectionName: string
+  isVirtual: boolean
   currentViewMode: 'grid' | 'list'
   setViewModeCookie: (viewMode: 'grid' | 'list') => Promise<void>
   sessions: Session[]
@@ -265,6 +270,8 @@ interface SectionSessionsContentProps {
 export function SectionSessionsContent({
   courseSlug,
   sectionSlug,
+  sectionName,
+  isVirtual,
   currentViewMode,
   setViewModeCookie,
   sessions,
@@ -298,13 +305,24 @@ export function SectionSessionsContent({
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
-            <p className="text-sm text-muted-foreground mt-2">{sectionSlug}</p>
-            <p className="text-sm font-mono text-muted-foreground mt-1">{courseData.code}</p>
+            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
+              {courseData.code} - Sección {sectionName} -
+              {isVirtual ? (
+                <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
+              ) : (
+                <University className="size-4 text-green-600 dark:text-green-400" />
+              )}
+              <span
+                className={`${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
+              >
+                {isVirtual ? 'Virtual' : 'Presencial'}
+              </span>
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-6">
+      <div className="flex gap-3 flex-row items-center mb-6">
         <h2 className="text-xl font-semibold">Sesiones de clase</h2>
         <ViewModeSwitcher
           current={viewMode}

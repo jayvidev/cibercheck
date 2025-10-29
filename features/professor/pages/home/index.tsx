@@ -22,9 +22,7 @@ interface MappedCourse {
 
 async function getTeacherCourses(teacherId: string | number): Promise<MappedCourse[]> {
   try {
-    console.warn('[HomePage] Fetching courses for teacherId:', teacherId)
     const courses = await listCoursesByTeacher<Course[]>(teacherId)
-    console.warn('[HomePage] API Response:', courses)
     const mapped = courses.map((course) => ({
       id: course.courseSlug,
       courseSlug: course.courseSlug,
@@ -33,10 +31,9 @@ async function getTeacherCourses(teacherId: string | number): Promise<MappedCour
       totalSections: course.totalSections,
       color: course.color,
     }))
-    console.warn('[HomePage] Mapped courses:', mapped)
     return mapped
   } catch (error) {
-    console.error('[HomePage] Error fetching courses:', error)
+    console.error('Error fetching courses:', error)
     return []
   }
 }
@@ -55,17 +52,13 @@ async function getUserFromCookie(): Promise<{
     const maybeStore = typeof cookiesFn === 'function' ? cookiesFn() : cookiesFn
     const store = typeof maybeStore?.then === 'function' ? await maybeStore : maybeStore
 
-    // Obtener el usuario del localStorage (en el servidor, usamos cookies)
     const userCookie = store?.get?.('auth_user')
-    console.warn('[HomePage] User cookie value:', userCookie?.value)
 
     if (!userCookie?.value) {
-      console.warn('[HomePage] No user cookie found')
       return null
     }
 
     const user = JSON.parse(decodeURIComponent(userCookie.value))
-    console.warn('[HomePage] Parsed user:', user)
     return user
   } catch (error) {
     console.error('[HomePage] Error getting user from cookie:', error)
@@ -77,11 +70,8 @@ export { getUserFromCookie }
 
 export async function HomePage() {
   const viewMode = await getViewModeCookie()
-  console.warn('[HomePage] Starting page load')
   const user = await getUserFromCookie()
-  console.warn('[HomePage] User:', user)
   const courses = user ? await getTeacherCourses(user.userId) : []
-  console.warn('[HomePage] Final courses:', courses)
 
   return (
     <HomePageContent

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { ArrowLeft, Building, Calendar1, Monitor, Users } from 'lucide-react'
+import { ArrowLeft, Calendar1, Layers, Monitor, University, Users } from 'lucide-react'
 import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
@@ -33,13 +33,15 @@ function SectionCard({
       <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] h-full cursor-pointer">
         <CardHeader className="pb-3">
           <div className="space-y-2">
-            <p className="text-sm font-semibold">Sección</p>
+            <p className="text-sm font-semibold inline-flex items-center gap-1">
+              <Layers className="size-4" /> Sección
+            </p>
             <h3 className="font-semibold text-lg leading-tight text-balance">{sectionName}</h3>
             <div className="flex items-center gap-1.5">
               {isVirtual ? (
                 <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
               ) : (
-                <Building className="size-4 text-green-600 dark:text-green-400" />
+                <University className="size-4 text-green-600 dark:text-green-400" />
               )}
               <p
                 className={`text-sm font-medium ${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
@@ -55,11 +57,15 @@ function SectionCard({
             <div className="flex gap-3">
               <div className="flex items-center gap-1.5">
                 <Calendar1 className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{totalSessions} sesiones</span>
+                <span className="text-sm font-medium">
+                  {totalSessions} {totalSessions === 1 ? 'sesión' : 'sesiones'}
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Users className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{totalStudents} estudiantes</span>
+                <span className="text-sm font-medium">
+                  {totalStudents} {totalStudents === 1 ? 'estudiante' : 'estudiantes'}
+                </span>
               </div>
             </div>
           </div>
@@ -81,13 +87,15 @@ function SectionListItem({
     <Link href={`/curso/${courseSlug}/${sectionSlug}`}>
       <div className="group flex items-center gap-4 rounded-lg border bg-card p-4 mb-3 transition-all hover:shadow-md cursor-pointer">
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-semibold">Sección</p>
+          <p className="text-sm font-semibold inline-flex items-center gap-1">
+            <Layers className="size-4" /> Sección
+          </p>
           <h3 className="font-semibold text-lg leading-tight text-balance">{sectionName}</h3>
           <div className="flex items-center gap-1.5">
             {isVirtual ? (
               <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
             ) : (
-              <Building className="size-4 text-green-600 dark:text-green-400" />
+              <University className="size-4 text-green-600 dark:text-green-400" />
             )}
             <p
               className={`text-sm font-medium ${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
@@ -99,11 +107,15 @@ function SectionListItem({
         <div className="flex gap-2 sm:border-l sm:pl-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <Calendar1 className="size-4 text-muted-foreground" />
-            <span className="text-sm font-medium">{totalSessions} sesiones</span>
+            <span className="text-sm font-medium">
+              {totalSessions} {totalSessions === 1 ? 'sesión' : 'sesiones'}
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users className="size-4 text-muted-foreground" />
-            <span className="text-sm font-medium">{totalStudents} estudiantes</span>
+            <span className="text-sm font-medium">
+              {totalStudents} {totalStudents === 1 ? 'estudiante' : 'estudiantes'}
+            </span>
           </div>
         </div>
       </div>
@@ -201,13 +213,13 @@ export function CourseSectionsContent({
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
-            <p className="text-sm font-mono text-muted-foreground mt-1">{courseData.code}</p>
+            <p className="text-sm text-muted-foreground mt-1">{courseData.code}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-6">
-        <h2 className="text-xl font-semibold">Secciones</h2>
+      <div className="flex gap-3 flex-row items-center mb-6">
+        <h2 className="text-xl font-semibold">Secciones de curso</h2>
         <ViewModeSwitcher
           current={viewMode}
           setViewModeCookie={handleViewModeChange}

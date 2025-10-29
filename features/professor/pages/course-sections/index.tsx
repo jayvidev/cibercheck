@@ -55,10 +55,10 @@ async function getSectionData(courseSlug: string): Promise<Section[]> {
   }
 }
 
-async function getCourseData(teacherId: number): Promise<Course | null> {
+async function getCourseData(teacherId: number, courseSlug: string): Promise<Course | null> {
   try {
     const courses = await listCoursesByTeacher<Course[]>(teacherId)
-    return courses.length > 0 ? courses[0] : null
+    return courses.find((course) => course.courseSlug === courseSlug) || null
   } catch (error) {
     console.error('Error fetching course:', error)
     return null
@@ -70,7 +70,7 @@ export async function CourseSectionsPage({ params }: { params: { courseSlug: str
   const viewMode = await getViewModeCookie()
   const user = await getUserFromCookie()
   const sections = await getSectionData(courseSlug)
-  const courseData = user ? await getCourseData(user.userId) : null
+  const courseData = user ? await getCourseData(user.userId, courseSlug) : null
 
   return (
     <CourseSectionsContent

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { BookOpen, Search, Star } from 'lucide-react'
+import { BookOpen, Layers, Search, Star } from 'lucide-react'
 import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
@@ -52,14 +52,15 @@ function CourseCard({ courseSlug, code, name, totalSections, color }: CourseCard
                   <BookOpen className="size-5" style={{ color }} />
                 </div>
               </div>
-              <p className="text-xs font-mono font-semibold mb-2" style={{ color }}>
+              <p className="text-xs font-semibold mb-2" style={{ color }}>
                 {code}
               </p>
               <h3 className="font-semibold text-lg leading-tight text-balance mb-2 uppercase">
                 {name}
               </h3>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs font-medium text-foreground inline-flex items-center gap-1 mt-1">
+              <Layers className="size-4 text-muted-foreground" />
               {totalSections} {totalSections === 1 ? 'sección' : 'secciones'}
             </p>
           </CardContent>
@@ -81,7 +82,8 @@ function CourseListItem({ courseSlug, code, name, totalSections, color }: Course
         <div className="flex-1 space-y-1">
           <p className="text-sm font-mono text-muted-foreground">{code}</p>
           <h3 className="font-semibold text-lg leading-tight text-balance uppercase">{name}</h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs font-medium text-foreground inline-flex items-center gap-1 mt-1">
+            <Layers className="size-4 text-muted-foreground" />
             {totalSections} {totalSections === 1 ? 'sección' : 'secciones'}
           </p>
         </div>

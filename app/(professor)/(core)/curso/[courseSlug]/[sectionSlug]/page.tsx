@@ -33,7 +33,7 @@ export async function generateMetadata({
     const section = sections.find((s) => s.sectionSlug === sectionSlug)
 
     return {
-      title: section && course ? `${section.sectionName} - ${course.name}` : 'Sección',
+      title: section && course ? `${course.name} - ${section.sectionName}` : 'Sección',
     }
   } catch {
     return {

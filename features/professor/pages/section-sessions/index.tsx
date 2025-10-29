@@ -1,8 +1,17 @@
 import { listCoursesByTeacher } from '@/lib/endpoints/courses'
+import { getSectionsByCourse } from '@/lib/endpoints/sections'
 import { getSessionsByCourseSection } from '@/lib/endpoints/sessions'
 import { getViewModeCookie, setViewModeCookie } from '@/lib/view-mode-actions'
 
 import { SectionSessionsContent } from './content'
+
+interface Section {
+  sectionSlug: string
+  sectionName: string
+  totalSessions: number
+  totalStudents: number
+  isVirtual: boolean
+}
 
 interface Session {
   courseSlug: string
@@ -65,13 +74,29 @@ async function getSessionData(courseSlug: string, sectionSlug: string): Promise<
   }
 }
 
-async function getCourseData(teacherId: number): Promise<Course | null> {
+async function getCourseData(teacherId: number, courseSlug: string): Promise<Course | null> {
   try {
     const courses = await listCoursesByTeacher<Course[]>(teacherId)
-    return courses.length > 0 ? courses[0] : null
+    return courses.find((course) => course.courseSlug === courseSlug) || null
   } catch (error) {
     console.error('Error fetching course:', error)
     return null
+  }
+}
+
+async function getSectionName(
+  courseSlug: string,
+  sectionSlug: string
+): Promise<{ name: string; isVirtual: boolean }> {
+  try {
+    const sections = await getSectionsByCourse<Section[]>(courseSlug)
+    const section = sections.find((s) => s.sectionSlug === sectionSlug)
+    return section
+      ? { name: section.sectionName, isVirtual: section.isVirtual }
+      : { name: sectionSlug, isVirtual: false }
+  } catch (error) {
+    console.error('Error fetching section:', error)
+    return { name: sectionSlug, isVirtual: false }
   }
 }
 
@@ -84,12 +109,15 @@ export async function SectionSessionsPage({
   const viewMode = await getViewModeCookie()
   const user = await getUserFromCookie()
   const sessions = await getSessionData(courseSlug, sectionSlug)
-  const courseData = user ? await getCourseData(user.userId) : null
+  const courseData = user ? await getCourseData(user.userId, courseSlug) : null
+  const { name: sectionName, isVirtual } = await getSectionName(courseSlug, sectionSlug)
 
   return (
     <SectionSessionsContent
       courseSlug={courseSlug}
       sectionSlug={sectionSlug}
+      sectionName={sectionName}
+      isVirtual={isVirtual}
       currentViewMode={viewMode}
       setViewModeCookie={setViewModeCookie}
       sessions={sessions}
