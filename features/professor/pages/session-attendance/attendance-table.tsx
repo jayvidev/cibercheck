@@ -171,6 +171,7 @@ export function AttendanceTable({
         return
       }
 
+      // store fetched sessionId for bulk operations (if parent didn't pass it)
       if (typeof apiResponse.sessionId === 'number') {
         fetchedSessionIdRef.current = apiResponse.sessionId
       }
@@ -217,11 +218,11 @@ export function AttendanceTable({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'presente':
-        return <Badge className="bg-green-600 hover:bg-green-700">Asistió</Badge>
+        return <Badge className="bg-green-600 hover:bg-green-700">Presente</Badge>
       case 'ausente':
-        return <Badge variant="destructive">Faltó</Badge>
+        return <Badge variant="destructive">Ausente</Badge>
       case 'tarde':
-        return <Badge className="bg-yellow-600 hover:bg-yellow-700">Tardanza</Badge>
+        return <Badge className="bg-yellow-600 hover:bg-yellow-700">Tarde</Badge>
       case 'justificado':
         return <Badge className="bg-blue-600 hover:bg-blue-700">Justificado</Badge>
       case 'no_registrado':
@@ -456,9 +457,9 @@ export function AttendanceTable({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="presente">Asistió</SelectItem>
-                          <SelectItem value="tarde">Tardanza</SelectItem>
-                          <SelectItem value="ausente">Faltó</SelectItem>
+                          <SelectItem value="presente">Presente</SelectItem>
+                          <SelectItem value="tarde">Tarde</SelectItem>
+                          <SelectItem value="ausente">Ausente</SelectItem>
                           <SelectItem value="justificado">Justificado</SelectItem>
                           <SelectItem value="no_registrado">No registrado</SelectItem>
                         </SelectContent>
