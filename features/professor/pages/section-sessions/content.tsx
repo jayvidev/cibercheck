@@ -326,19 +326,23 @@ export function SectionSessionsContent({
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
-              <Hash className="size-4" />
-              {courseData.code}
-              <span className="text-muted-foreground px-1">|</span>
-              {isVirtual ? (
-                <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
-              ) : (
-                <University className="size-4 text-green-600 dark:text-green-400" />
-              )}
-              <span
-                className={`${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
-              >
-                {isVirtual ? 'Virtual' : 'Presencial'}
+            <p className="text-sm mt-1 inline-flex items-center gap-3">
+              <span className="inline-flex items-center gap-2">
+                <Hash className="size-4 text-muted-foreground" />
+                <span className="text-muted-foreground">{courseData.code}</span>
+              </span>
+
+              <span className="inline-flex items-center gap-2">
+                {isVirtual ? (
+                  <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <University className="size-4 text-green-600 dark:text-green-400" />
+                )}
+                <span
+                  className={`${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
+                >
+                  {isVirtual ? 'Virtual' : 'Presencial'}
+                </span>
               </span>
             </p>
           </div>

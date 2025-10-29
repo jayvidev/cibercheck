@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -34,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { getAttendanceBySession } from '@/lib/endpoints/sessions'
 
 import { QRModal } from './qr-modal'
 
@@ -80,8 +82,9 @@ export function AttendanceTable({
 }: AttendanceTableProps) {
   const [students, setStudents] = useState(initialStudents)
   const [qrModalOpen, setQrModalOpen] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  // removed unused helper
+  const prevQrOpenRef = useRef<boolean>(false)
 
   function formatTime(time?: string) {
     if (!time) return ''
@@ -121,6 +124,47 @@ export function AttendanceTable({
   const updateStatus = (studentId: string, status: string) => {
     setStudents(students.map((s) => (s.id === studentId ? { ...s, status } : s)))
   }
+
+  const fetchAttendance = async () => {
+    try {
+      setIsRefreshing(true)
+      console.warn('[AttendanceTable] Fetching updated attendance...')
+      const apiResponse = (await getAttendanceBySession(
+        courseSlug,
+        sectionSlug,
+        sessionNumber
+      )) as any
+
+      if (!apiResponse || !Array.isArray(apiResponse.students)) {
+        console.warn('[AttendanceTable] Unexpected attendance response:', apiResponse)
+        return
+      }
+
+      const mappedStudents: Student[] = apiResponse.students.map((student: any) => ({
+        id: `${student.studentId}`,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        email: student.email,
+        status: student.status || 'no_registrado',
+        name: `${student.firstName} ${student.lastName}`,
+        studentId: `EST${String(student.studentId).padStart(6, '0')}`,
+      }))
+
+      setStudents(mappedStudents)
+    } catch (err) {
+      console.error('[AttendanceTable] Error fetching attendance:', err)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (prevQrOpenRef.current && !qrModalOpen) {
+      void fetchAttendance()
+    }
+    prevQrOpenRef.current = qrModalOpen
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qrModalOpen])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -191,29 +235,35 @@ export function AttendanceTable({
           />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseName}</h1>
-            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
-              <Hash className="size-4" />
-              {courseCode || ''}
-              <span className="text-muted-foreground px-1">|</span>
-              {isVirtual ? (
-                <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
-              ) : (
-                <University className="size-4 text-green-600 dark:text-green-400" />
-              )}
-              <span
-                className={`${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
-              >
-                {isVirtual ? 'Virtual' : 'Presencial'}
+            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-3">
+              <span className="inline-flex items-center gap-2">
+                <Hash className="size-4" />
+                <span>{courseCode || ''}</span>
               </span>
-              <span className="text-muted-foreground px-1">|</span>
-              <Calendar className="size-4" />
-              <span>{formatDateShort(sessionDay) || sessionDate}</span>
+
+              <span className="inline-flex items-center gap-2">
+                {isVirtual ? (
+                  <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <University className="size-4 text-green-600 dark:text-green-400" />
+                )}
+                <span
+                  className={`${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
+                >
+                  {isVirtual ? 'Virtual' : 'Presencial'}
+                </span>
+              </span>
+
+              <span className="inline-flex items-center gap-2 text-muted-foreground">
+                <Calendar className="size-4" />
+                <span>{formatDateShort(sessionDay) || sessionDate}</span>
+              </span>
+
               {timeRange ? (
-                <>
-                  <span className="text-muted-foreground px-1">|</span>
+                <span className="inline-flex items-center gap-2">
                   <Clock className="size-4" />
                   <span>{timeRange}</span>
-                </>
+                </span>
               ) : null}
             </p>
           </div>
@@ -229,7 +279,7 @@ export function AttendanceTable({
           const IconComponent = card.icon
           return (
             <div key={card.label} className={`rounded-lg border bg-card p-4 ${card.color}`}>
-              <div className="flex items-center gap-1 mb-2">
+              <div className="flex items-center gap-2 mb-2">
                 <IconComponent className="size-4" />
                 <p className="text-sm">{card.label}</p>
               </div>
@@ -251,31 +301,55 @@ export function AttendanceTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell className="font-medium">{student.firstName}</TableCell>
-                <TableCell className="font-medium">{student.lastName}</TableCell>
-                <TableCell className="font-medium">{student.email}</TableCell>
-                <TableCell>{getStatusBadge(student.status)}</TableCell>
-                <TableCell>
-                  <Select
-                    value={student.status}
-                    onValueChange={(value) => updateStatus(student.id, value)}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="presente">Presente</SelectItem>
-                      <SelectItem value="tarde">Tarde</SelectItem>
-                      <SelectItem value="ausente">Ausente</SelectItem>
-                      <SelectItem value="justificado">Justificado</SelectItem>
-                      <SelectItem value="no_registrado">No registrado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isRefreshing
+              ? // render 8 skeleton rows while refreshing
+                Array.from({ length: 8 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    <TableCell>
+                      <Skeleton className="h-4 w-36" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-48" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Skeleton className="h-8 w-20" />
+                        <Skeleton className="h-8 w-20" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : students.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell className="font-medium">{student.firstName}</TableCell>
+                    <TableCell className="font-medium">{student.lastName}</TableCell>
+                    <TableCell className="font-medium">{student.email}</TableCell>
+                    <TableCell>{getStatusBadge(student.status)}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={student.status}
+                        onValueChange={(value) => updateStatus(student.id, value)}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="presente">Presente</SelectItem>
+                          <SelectItem value="tarde">Tarde</SelectItem>
+                          <SelectItem value="ausente">Ausente</SelectItem>
+                          <SelectItem value="justificado">Justificado</SelectItem>
+                          <SelectItem value="no_registrado">No registrado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
       </div>

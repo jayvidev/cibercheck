@@ -98,7 +98,6 @@ async function getSessionAttendance(
       email: student.email,
       status: student.status,
       notes: student.notes,
-      // keep legacy fields in case other parts expect them
       name: `${student.firstName} ${student.lastName}`,
       studentId: `EST${String(student.studentId).padStart(6, '0')}`,
       attendance: mapAPIStatusToAttendance(student.status),
