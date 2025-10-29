@@ -17,7 +17,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { CirclePlus, FileSpreadsheet, FileX } from 'lucide-react'
+import { CirclePlus } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import { sidebarMap } from '@admin/components/sidebar'
@@ -179,14 +179,6 @@ export function DataTable<TData, TValue>({
           <p className="text-muted-foreground">{description}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
-            <FileX className="text-green-500 dark:text-green-400" />
-            Excel
-          </Button>
-          <Button variant="outline">
-            <FileSpreadsheet className="text-destructive" />
-            PDF
-          </Button>
           <Button onClick={onAdd}>
             <CirclePlus />
             Agregar
