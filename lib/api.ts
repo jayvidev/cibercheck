@@ -17,9 +17,19 @@ function getBaseUrl(): string {
 
 function buildUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) return path
-  const base = getBaseUrl()
+  const baseRaw = getBaseUrl().replace(/\/$/, '')
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  return `${base}${normalizedPath}`
+
+  // Evitar duplicar prefijo /api/vX cuando la base ya lo incluye
+  const apiVersionInBase = /\/api\/v\d+(?:\/)?$/i.test(baseRaw)
+  const apiVersionInPath = /^\/api\/v\d+\//i.test(normalizedPath)
+
+  if (apiVersionInBase && apiVersionInPath) {
+    const dedupedPath = normalizedPath.replace(/^\/api\/v\d+/, '') || '/'
+    return `${baseRaw}${dedupedPath}`
+  }
+
+  return `${baseRaw}${normalizedPath}`
 }
 
 function isJsonContent(headers: Headers): boolean {
