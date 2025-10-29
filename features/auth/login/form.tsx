@@ -55,7 +55,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
       } else if (user?.role === 'estudiante') {
         toast.error('Los estudiantes deben ingresar por la aplicación móvil.')
         router.push('/iniciar-sesion')
-      } else if (user?.role === 'admin') {
+      } else if (user?.role === 'administrador') {
         router.push('/admin')
       }
     }

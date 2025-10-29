@@ -3,7 +3,7 @@ export interface User {
   firstName: string
   lastName: string
   email: string
-  role: 'profesor' | 'admin' | 'estudiante'
+  role: 'profesor' | 'estudiante' | 'administrador'
 }
 
 export interface LoginResponse {

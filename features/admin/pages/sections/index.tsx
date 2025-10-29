@@ -120,7 +120,7 @@ export function SectionsPage({ title }: Props) {
   // Cargar profesores si el usuario es admin (para asignar docente al crear sección)
   React.useEffect(() => {
     const fetchTeachers = async () => {
-      if (user?.role !== 'admin') {
+      if (user?.role !== 'administrador') {
         setTeachers([])
         setSelectedTeacherId(user?.userId ?? null)
         return
@@ -349,7 +349,7 @@ export function SectionsPage({ title }: Props) {
                       onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
                     />
                   </div>
-                  {user?.role === 'admin' ? (
+                  {user?.role === 'administrador' ? (
                     <div>
                       <label className="text-sm text-muted-foreground">Profesor</label>
                       <Select
@@ -383,7 +383,7 @@ export function SectionsPage({ title }: Props) {
                           const course = courses.find((c) => c.slug === editItem.courseSlug)
                           const courseId = course?.courseId
                           const teacherId =
-                            user?.role === 'admin' ? editItem.teacherId : user?.userId
+                            user?.role === 'administrador' ? editItem.teacherId : user?.userId
                           if (!courseId || !teacherId) {
                             setEditError('Curso o profesor no válidos')
                             return
@@ -464,7 +464,7 @@ export function SectionsPage({ title }: Props) {
                     placeholder="Ej. Sección A"
                   />
                 </div>
-                {user?.role === 'admin' ? (
+                {user?.role === 'administrador' ? (
                   <div>
                     <label className="text-sm text-muted-foreground">Profesor</label>
                     <Select
