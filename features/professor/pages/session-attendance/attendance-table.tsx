@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
 import { bulkMarkAttendance, getAttendanceBySession } from '@/lib/endpoints/sessions'
+import { withMetaLabelFilter } from '@/lib/with-meta-label-filter'
 import { withMetaLabelHeader } from '@/lib/with-meta-label-header'
 
 import { QRModal } from './qr-modal'
@@ -399,6 +400,24 @@ export function AttendanceTable({
         </Select>
       ),
       enableSorting: false,
+      meta: {
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+        ...withMetaLabelFilter<Student>({
+          columnId: 'status',
+          options: [
+            { value: 'presente', label: 'Asistió', icon: CheckCircle2 },
+            { value: 'ausente', label: 'Faltó', icon: XCircle },
+            { value: 'tarde', label: 'Tardanza', icon: Clock },
+            { value: 'justificado', label: 'Justificado', icon: FileText },
+            { value: 'no_registrado', label: 'No registrado', icon: CircleDashed },
+          ] as unknown as { value: string; label: string }[],
+        }),
+      },
+      filterFn: (row, id, value: string[]) => {
+        if (!Array.isArray(value) || value.length === 0) return true
+        return value.includes(String(row.getValue(id)))
+      },
     },
   ]
 
