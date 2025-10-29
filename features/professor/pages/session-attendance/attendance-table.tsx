@@ -19,13 +19,7 @@ import {
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
 import {
@@ -215,20 +209,67 @@ export function AttendanceTable({
     setChangedMap({})
   }, [initialStudents])
 
-  const getStatusBadge = (status: string) => {
+  const statusLabel = (status: string) => {
     switch (status) {
       case 'presente':
-        return <Badge className="bg-green-600 hover:bg-green-700">Presente</Badge>
+        return 'Asistió'
       case 'ausente':
-        return <Badge variant="destructive">Ausente</Badge>
+        return 'Faltó'
       case 'tarde':
-        return <Badge className="bg-yellow-600 hover:bg-yellow-700">Tarde</Badge>
+        return 'Tardanza'
       case 'justificado':
-        return <Badge className="bg-blue-600 hover:bg-blue-700">Justificado</Badge>
+        return 'Justificado'
       case 'no_registrado':
-        return <Badge className="bg-gray-600 hover:bg-gray-700">No registrado</Badge>
+        return 'No registrado'
       default:
-        return <Badge className="bg-muted">{status}</Badge>
+        return status
+    }
+  }
+
+  const renderBadge = (status: string) => {
+    switch (status) {
+      case 'presente':
+        return (
+          <Badge className="bg-green-600">
+            <CheckCircle2 className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
+      case 'ausente':
+        return (
+          <Badge variant="destructive">
+            <XCircle className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
+      case 'tarde':
+        return (
+          <Badge className="bg-yellow-600">
+            <Clock className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
+      case 'justificado':
+        return (
+          <Badge className="bg-blue-600">
+            <FileText className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
+      case 'no_registrado':
+        return (
+          <Badge className="bg-gray-600">
+            <CircleDashed className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
+      default:
+        return (
+          <Badge className="bg-muted">
+            <CircleDashed className="text-current" />
+            {statusLabel(status)}
+          </Badge>
+        )
     }
   }
 
@@ -414,7 +455,6 @@ export function AttendanceTable({
               <TableHead>Apellido</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead>Acción</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -447,21 +487,24 @@ export function AttendanceTable({
                     <TableCell className="font-medium">{student.firstName}</TableCell>
                     <TableCell className="font-medium">{student.lastName}</TableCell>
                     <TableCell className="font-medium">{student.email}</TableCell>
-                    <TableCell>{getStatusBadge(student.status)}</TableCell>
                     <TableCell>
                       <Select
                         value={student.status}
                         onValueChange={(value) => updateStatus(student.id, value)}
                       >
                         <SelectTrigger className="w-[140px]">
-                          <SelectValue />
+                          <div className="flex items-center gap-2">
+                            {renderBadge(student.status)}
+                          </div>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="presente">Presente</SelectItem>
-                          <SelectItem value="tarde">Tarde</SelectItem>
-                          <SelectItem value="ausente">Ausente</SelectItem>
-                          <SelectItem value="justificado">Justificado</SelectItem>
-                          <SelectItem value="no_registrado">No registrado</SelectItem>
+                          <SelectItem value="presente">{renderBadge('presente')}</SelectItem>
+                          <SelectItem value="tarde">{renderBadge('tarde')}</SelectItem>
+                          <SelectItem value="ausente">{renderBadge('ausente')}</SelectItem>
+                          <SelectItem value="justificado">{renderBadge('justificado')}</SelectItem>
+                          <SelectItem value="no_registrado">
+                            {renderBadge('no_registrado')}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>
