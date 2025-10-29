@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import { SectionSessionsPage } from '@professor/pages/section-sessions'
 
 import { getUserFromCookie } from '@/features/professor/pages/home'
+import { getCourseBySlug } from '@/lib/endpoints/courses'
 import { getSectionsByCourse } from '@/lib/endpoints/sections'
 
 interface Section {
   sectionSlug: string
-  name: string
-  courseName: string
+  sectionName: string
 }
 
 export async function generateMetadata({
@@ -26,11 +26,14 @@ export async function generateMetadata({
       }
     }
 
-    const sections = (await getSectionsByCourse(courseSlug)) as Section[]
+    const [sections, course] = await Promise.all([
+      getSectionsByCourse(courseSlug) as Promise<Section[]>,
+      getCourseBySlug(courseSlug) as Promise<{ name: string }>,
+    ])
     const section = sections.find((s) => s.sectionSlug === sectionSlug)
 
     return {
-      title: section ? `${section.courseName} - ${section.name}` : 'Sección',
+      title: section && course ? `${section.sectionName} - ${course.name}` : 'Sección',
     }
   } catch {
     return {
