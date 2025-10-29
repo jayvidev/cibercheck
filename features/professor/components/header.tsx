@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Home, LogOut, Settings } from 'lucide-react'
+import { Home, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -14,6 +14,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -29,6 +30,7 @@ export function Header() {
 
   const displayName = user ? `${user.firstName} ${user.lastName}` : 'Usuario'
   const avatarSrc = ''
+  const displayEmail = user?.email ?? ''
 
   const handleLogoutClick = () => {
     setDropdownOpen(false)
@@ -70,10 +72,12 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem>
-                <Settings className="text-current" />
-                Ajustes
-              </DropdownMenuItem>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-sm leading-none font-medium">{displayName}</p>
+                  <p className="text-muted-foreground text-xs leading-none">{displayEmail}</p>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={handleLogoutClick}>
                 <LogOut />
