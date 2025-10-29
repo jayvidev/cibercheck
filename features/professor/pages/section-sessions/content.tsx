@@ -295,9 +295,9 @@ export function SectionSessionsContent({
       ) : sessions.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sessions.map((session) => (
+            {sessions.map((session, index) => (
               <SessionCard
-                key={session.sessionNumber}
+                key={index}
                 sessionNumber={session.sessionNumber.toString()}
                 courseSlug={courseSlug}
                 sectionSlug={sectionSlug}
@@ -314,9 +314,9 @@ export function SectionSessionsContent({
           </div>
         ) : (
           <div className="space-y-3">
-            {sessions.map((session) => (
+            {sessions.map((session, index) => (
               <SessionListItem
-                key={session.sessionNumber}
+                key={index}
                 sessionNumber={session.sessionNumber.toString()}
                 courseSlug={courseSlug}
                 sectionSlug={sectionSlug}
