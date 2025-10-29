@@ -5,6 +5,15 @@ import * as React from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -13,11 +22,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-// API endpoints
+import { useAuth } from '@/context/auth-context'
+import { alertError, alertSuccess } from '@/lib/alerts'
 import { listCourses } from '@/lib/endpoints/courses'
 import {
   createSectionForCourse,
-  getSectionsByCourseSlug,
   getSectionsStatsByCourseSlug,
   updateSection,
 } from '@/lib/endpoints/sections'
@@ -26,18 +35,6 @@ import { listUsers } from '@/lib/endpoints/users'
 import { CategoryList, categoryListSchema } from '../courses/list.schema'
 import { columns as buildColumns } from './columns'
 import { type SectionList, sectionListSchema } from './list.schema'
-import { useAuth } from '@/context/auth-context'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { alertError, alertSuccess } from '@/lib/alerts'
 
 interface Props {
   title: string

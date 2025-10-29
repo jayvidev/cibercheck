@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { format, parseISO } from 'date-fns'
+import { es } from 'date-fns/locale'
 import {
   ArrowLeft,
   Calendar,
@@ -62,11 +64,18 @@ interface SessionCardProps {
 }
 
 function formatTime(time: string): string {
-  const [hours, minutes] = time.split(':')
-  const hour = Number.parseInt(hours)
-  const ampm = hour >= 12 ? 'PM' : 'AM'
-  const displayHour = hour % 12 || 12
-  return `${displayHour}:${minutes} ${ampm}`
+  if (!time) return ''
+  let dt: Date
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(time)) {
+    dt = parseISO(time)
+  } else if (/^\d{2}:\d{2}/.test(time)) {
+    const [h, m, s] = time.split(':')
+    dt = new Date()
+    dt.setHours(Number(h), Number(m), Number(s || 0), 0)
+  } else {
+    return time
+  }
+  return format(dt, 'h:mm a', { locale: es })
 }
 
 function SessionCard({
@@ -99,11 +108,7 @@ function SessionCard({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 shrink-0" />
-              {new Date(date).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
+              {format(parseISO(date), 'd MMM yyyy', { locale: es })}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4 shrink-0" />
@@ -304,9 +309,7 @@ export function SectionSessionsContent({
         <div className="flex items-start gap-4">
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight text-balance uppercase">
-              {courseData.name}
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
             <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
               {courseData.code} - Sección {sectionName} -
               {isVirtual ? (

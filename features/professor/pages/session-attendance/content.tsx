@@ -10,9 +10,14 @@ import { AttendanceTable } from './attendance-table'
 
 interface Student {
   id: string
-  name: string
-  studentId: string
-  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
+  firstName: string
+  lastName: string
+  email: string
+  status: 'presente' | 'ausente' | 'tarde' | 'justificado' | 'no_registrado' | string
+  // legacy fields (optional) kept for compatibility
+  name?: string
+  studentId?: string
+  attendance?: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
 }
 
 interface SessionAttendanceContentProps {
@@ -23,6 +28,13 @@ interface SessionAttendanceContentProps {
   sessionDate?: string
   students?: Student[]
   isLoading?: boolean
+  courseCode?: string
+  sectionName?: string
+  courseColor?: string
+  isVirtual?: boolean
+  startTime?: string
+  endTime?: string
+  sessionDay?: string
 }
 
 function AttendanceTableSkeleton() {
@@ -54,6 +66,13 @@ export function SessionAttendanceContent({
   sessionDate = '',
   students = [],
   isLoading = false,
+  courseCode,
+  sectionName,
+  courseColor,
+  isVirtual,
+  startTime,
+  endTime,
+  sessionDay,
 }: SessionAttendanceContentProps) {
   return (
     <>
@@ -74,6 +93,13 @@ export function SessionAttendanceContent({
           courseName={courseName}
           sessionDate={sessionDate}
           students={students}
+          courseCode={courseCode}
+          sectionName={sectionName}
+          courseColor={courseColor}
+          isVirtual={isVirtual}
+          startTime={startTime}
+          endTime={endTime}
+          sessionDay={sessionDay}
         />
       )}
     </>

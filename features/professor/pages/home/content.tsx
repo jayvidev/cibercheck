@@ -55,9 +55,7 @@ function CourseCard({ courseSlug, code, name, totalSections, color }: CourseCard
               <p className="text-xs font-semibold mb-2" style={{ color }}>
                 {code}
               </p>
-              <h3 className="font-semibold text-lg leading-tight text-balance mb-2 uppercase">
-                {name}
-              </h3>
+              <h3 className="font-semibold text-lg leading-tight text-balance mb-2">{name}</h3>
             </div>
             <p className="text-xs font-medium text-foreground inline-flex items-center gap-1 mt-1">
               <Layers className="size-4 text-muted-foreground" />
@@ -81,7 +79,7 @@ function CourseListItem({ courseSlug, code, name, totalSections, color }: Course
 
         <div className="flex-1 space-y-1">
           <p className="text-sm font-mono text-muted-foreground">{code}</p>
-          <h3 className="font-semibold text-lg leading-tight text-balance uppercase">{name}</h3>
+          <h3 className="font-semibold text-lg leading-tight text-balance">{name}</h3>
           <p className="text-xs font-medium text-foreground inline-flex items-center gap-1 mt-1">
             <Layers className="size-4 text-muted-foreground" />
             {totalSections} {totalSections === 1 ? 'sección' : 'secciones'}
