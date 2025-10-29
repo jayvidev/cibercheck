@@ -408,7 +408,7 @@ export function AttendanceTable({
           <div className="flex items-center gap-2">
             <Button
               onClick={handleBulkUpdate}
-              variant="secondary"
+              variant="outline"
               className="gap-2"
               disabled={!hasChanges || isSending}
             >
