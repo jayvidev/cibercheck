@@ -33,7 +33,7 @@ interface QRTokenResponse {
   isExpired: boolean
 }
 
-const REGENERATE_INTERVAL = 8000 // 8 segundos (antes de los 10 segundos de expiración)
+const REGENERATE_INTERVAL = 10000
 
 export function QRModal({
   open,
@@ -48,7 +48,6 @@ export function QRModal({
   const [error, setError] = useState<string | null>(null)
   const [countdown, setCountdown] = useState(REGENERATE_INTERVAL / 1000)
 
-  // Función para generar el token inicial
   const generateInitialToken = async () => {
     setIsGenerating(true)
     setError(null)
@@ -67,7 +66,6 @@ export function QRModal({
       console.error('[QRModal] Error generating token:', err)
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
 
-      // Mensajes de error más específicos
       if (errorMessage.includes('SessionId1') || errorMessage.includes('Invalid column')) {
         setError('Error del servidor. Por favor contacta al administrador del sistema.')
       } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
@@ -82,7 +80,6 @@ export function QRModal({
     }
   }
 
-  // Función para regenerar el token
   const regenerateToken = async () => {
     try {
       console.warn('[QRModal] Regenerating QR token...')
@@ -100,8 +97,6 @@ export function QRModal({
       console.error('[QRModal] Error regenerating token:', err)
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
 
-      // No mostrar error en regeneración si es problema del servidor
-      // El QR anterior seguirá mostrándose
       if (errorMessage.includes('SessionId1') || errorMessage.includes('Invalid column')) {
         console.error('[QRModal] Backend error - keeping previous QR active')
       } else {
@@ -110,12 +105,10 @@ export function QRModal({
     }
   }
 
-  // Generar token inicial cuando se abre el modal
   useEffect(() => {
     if (open) {
       generateInitialToken()
     } else {
-      // Limpiar estado cuando se cierra
       setQrToken('')
       setError(null)
       setCountdown(REGENERATE_INTERVAL / 1000)
@@ -123,7 +116,6 @@ export function QRModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
-  // Configurar regeneración automática cada 8 segundos
   useEffect(() => {
     if (!open || !qrToken || isGenerating) return
 
@@ -135,7 +127,6 @@ export function QRModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, qrToken, isGenerating])
 
-  // Countdown visual
   useEffect(() => {
     if (!open || !qrToken) return
 
