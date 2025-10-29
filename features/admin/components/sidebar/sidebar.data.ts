@@ -16,11 +16,6 @@ const getSidebarItemsByGroup = (group: GroupKey) =>
     }))
 
 export const sidebarData = {
-  user: {
-    name: 'Jason',
-    email: 'jason.vilac@gmail.com',
-    avatar: '',
-  },
   navGroups: [
     {
       title: 'Inicio',

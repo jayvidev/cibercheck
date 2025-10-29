@@ -18,13 +18,13 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/context/auth-context'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 
 const photoSchema = z.object({
@@ -44,18 +44,6 @@ const photoSchema = z.object({
 })
 
 const personalSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: 'El nombre de usuario debe tener al menos 2 caracteres.',
-    })
-    .max(15, {
-      message: 'El nombre de usuario no puede tener más de 15 caracteres.',
-    })
-    .transform((val) => val.trim())
-    .refine((val) => /^[A-Za-z0-9_]+$/.test(val), {
-      message: 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
-    }),
   email: z.email({ message: 'Introduce un correo electrónico válido.' }).trim(),
   firstName: z
     .string()
@@ -79,10 +67,9 @@ type PhotoFormValues = z.infer<typeof photoSchema>
 type PersonalFormValues = z.infer<typeof personalSchema>
 
 const personalDefaults: Partial<PersonalFormValues> = {
-  username: 'Jason',
-  email: 'jason.vilac@gmail.com',
-  firstName: 'Jason',
-  lastName: 'Vila',
+  email: '',
+  firstName: '',
+  lastName: '',
 }
 
 export function ProfileForm() {
@@ -97,6 +84,18 @@ export function ProfileForm() {
     defaultValues: personalDefaults,
     mode: 'onChange',
   })
+  const { user: authUser } = useAuth()
+
+  useEffect(() => {
+    if (authUser) {
+      personalForm.reset({
+        firstName: authUser.firstName ?? '',
+        lastName: authUser.lastName ?? '',
+        email: authUser.email ?? '',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser])
 
   const photoValue = useWatch({ control: photoForm.control, name: 'photo' })
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -236,26 +235,7 @@ export function ProfileForm() {
                 )}
               />
             </div>
-            <FormField
-              control={personalForm.control}
-              name="username"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Nombre de usuario</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ingrese su nombre de usuario"
-                      autoComplete="username"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Puedes cambiar tu nombre de usuario una vez cada 30 días.
-                  </FormDescription>
-                  {fieldState.error && <FormMessage />}
-                </FormItem>
-              )}
-            />
+            {/* username removed: not used in authenticated profile */}
             <FormField
               control={personalForm.control}
               name="email"
