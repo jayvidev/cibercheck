@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 
-import { Home, LogOut, Settings, User } from 'lucide-react'
+import { Home, LogOut, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
 import { Logo } from '@/components/shared/logo'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,12 +19,16 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { useAuth } from '@/context/auth-context'
+import { getInitials } from '@/lib/utils'
 
 export function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const router = useRouter()
+
+  const displayName = user ? `${user.firstName} ${user.lastName}` : 'Usuario'
+  const avatarSrc = ''
 
   const handleLogoutClick = () => {
     setDropdownOpen(false)
@@ -57,8 +62,11 @@ export function Header() {
 
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <User className="size-4" />
+              <Button variant="ghost" size="sm" className="rounded-full p-0">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={avatarSrc} alt={displayName} />
+                  <AvatarFallback className="text-xs">{getInitials(displayName)}</AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
