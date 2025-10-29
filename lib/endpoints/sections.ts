@@ -6,6 +6,7 @@ export type SectionUpdatePayload = {
   name: string
   courseId?: number
   teacherId?: number
+  isVirtual?: boolean
 }
 
 export async function getSectionsByCourseSlug<T = unknown>(
@@ -39,7 +40,7 @@ export async function updateSection<T = unknown>(
 
 export async function createSectionForCourse<T = unknown>(
   courseSlug: string,
-  body: { name: string; teacherId: number },
+  body: { name: string; teacherId: number; isVirtual?: boolean },
   schema?: Schema<T>
 ): Promise<T> {
   return fetchJson<T>({

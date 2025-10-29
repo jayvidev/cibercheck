@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,15 +23,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { alertConfirm, alertError, alertSuccess } from '@/lib/alerts'
+import { listCourses } from '@/lib/endpoints/courses'
 import {
-  getStudentEnrollments,
   enrollStudent,
   getSectionsByCourseSlug,
+  getStudentEnrollments,
   unenrollStudent,
 } from '@/lib/endpoints/sections'
-import { alertConfirm, alertError, alertSuccess } from '@/lib/alerts'
 import { listUsers } from '@/lib/endpoints/users'
-import { listCourses } from '@/lib/endpoints/courses'
 
 export default function Page() {
   const [loading, setLoading] = React.useState(true)
@@ -46,6 +47,7 @@ export default function Page() {
       sectionId: number
       name: string
       slug: string
+      isVirtual?: boolean
       teacherId: number
       courseId: number
       courseName: string
@@ -98,7 +100,17 @@ export default function Page() {
       try {
         setLoading(true)
         const res = await getStudentEnrollments<any[]>(selectedStudentId)
-        setEnrollments(res || [])
+        const norm = (res || []).map((e: any) => ({
+          sectionId: e.sectionId,
+          name: e.name,
+          slug: e.slug,
+          isVirtual: !!e.isVirtual,
+          teacherId: e.teacherId,
+          courseId: e.courseId,
+          courseName: e.courseName,
+          courseSlug: e.courseSlug,
+        }))
+        setEnrollments(norm)
         setError(null)
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Error cargando matrículas')
@@ -212,8 +224,9 @@ export default function Page() {
         <div className="rounded-md border">
           <div className="grid grid-cols-12 px-4 py-2 text-sm font-medium bg-muted/30">
             <div className="col-span-4">Sección</div>
-            <div className="col-span-4">Curso</div>
+            <div className="col-span-3">Curso</div>
             <div className="col-span-3">Slug</div>
+            <div className="col-span-1">Modalidad</div>
             <div className="col-span-1 text-right">Acciones</div>
           </div>
           {enrollments.length === 0 ? (
@@ -235,9 +248,14 @@ export default function Page() {
                   className="grid grid-cols-12 px-4 py-2 border-t text-sm items-center"
                 >
                   <div className="col-span-4">{e.name}</div>
-                  <div className="col-span-4">{e.courseName}</div>
+                  <div className="col-span-3">{e.courseName}</div>
                   <div className="col-span-3 font-mono">
                     {e.courseSlug}/{e.slug}
+                  </div>
+                  <div className="col-span-1">
+                    <Badge variant={e.isVirtual ? 'default' : 'secondary'}>
+                      {e.isVirtual ? 'Virtual' : 'Presencial'}
+                    </Badge>
                   </div>
                   <div className="col-span-1 text-right">
                     <Button

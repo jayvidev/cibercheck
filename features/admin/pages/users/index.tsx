@@ -24,9 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { alertError, alertSuccess } from '@/lib/alerts'
 // API endpoints
 import { createUser, listUsers, updateUser } from '@/lib/endpoints/users'
-import { alertError, alertSuccess } from '@/lib/alerts'
 
 import { columns as buildColumns } from './columns'
 import { type UserList, userListSchema } from './list.schema'

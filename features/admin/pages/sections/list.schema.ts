@@ -7,6 +7,7 @@ export const sectionListSchema = z.object({
   name: z.string(),
   slug: z.string(),
   teacherId: z.number(),
+  isVirtual: z.boolean().optional(),
   courseName: z.string().optional(),
   courseSlug: z.string().optional(),
   studentsCount: z.number().optional(),

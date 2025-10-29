@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
 import { useAuth } from '@/context/auth-context'
 import { alertError, alertSuccess } from '@/lib/alerts'
 import { listCourses } from '@/lib/endpoints/courses'
@@ -48,6 +49,7 @@ export function SectionsPage({ title }: Props) {
   const [error, setError] = React.useState<string | null>(null)
   const [creating, setCreating] = React.useState(false)
   const [newSectionName, setNewSectionName] = React.useState('')
+  const [newSectionVirtual, setNewSectionVirtual] = React.useState(false)
   const [selectedTeacherId, setSelectedTeacherId] = React.useState<number | null>(null)
   const [teachers, setTeachers] = React.useState<
     { userId: number; firstName: string; lastName: string }[]
@@ -64,6 +66,7 @@ export function SectionsPage({ title }: Props) {
     name: string
     courseSlug: string
     teacherId: number | null
+    isVirtual?: boolean
   } | null>(null)
 
   // Helper para sugerir el nombre de la sección con letras estilo "Sección A", "Sección B", ...
@@ -146,6 +149,7 @@ export function SectionsPage({ title }: Props) {
           name: s.name,
           slug: s.slug,
           teacherId: s.teacherId,
+          isVirtual: s.isVirtual ?? false,
           courseName: s.courseName ?? res?.courseName,
           courseSlug: s.courseSlug ?? res?.courseSlug,
           studentsCount: s.studentsCount,
@@ -186,6 +190,7 @@ export function SectionsPage({ title }: Props) {
             name: row.name,
             courseSlug: row.courseSlug || selectedCourseSlug || '',
             teacherId: row.teacherId || null,
+            isVirtual: row.isVirtual ?? false,
           })
           setEditOpen(true)
         },
@@ -215,6 +220,7 @@ export function SectionsPage({ title }: Props) {
       await createSectionForCourse(selectedCourseSlug, {
         name: newSectionName.trim(),
         teacherId: selectedTeacherId,
+        isVirtual: newSectionVirtual,
       })
       setCreating(false)
       await alertSuccess('Sección creada', 'La sección se creó correctamente.')
@@ -226,6 +232,7 @@ export function SectionsPage({ title }: Props) {
         name: s.name,
         slug: s.slug,
         teacherId: s.teacherId,
+        isVirtual: s.isVirtual ?? false,
         courseName: s.courseName ?? res?.courseName,
         courseSlug: s.courseSlug ?? res?.courseSlug,
         studentsCount: s.studentsCount,
@@ -291,6 +298,12 @@ export function SectionsPage({ title }: Props) {
                     <p className="text-sm text-muted-foreground">Slug</p>
                     <p className="font-mono text-sm">{detailsItem.slug}</p>
                   </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Modalidad</p>
+                    <p className="font-medium">
+                      {detailsItem.isVirtual ? 'Virtual' : 'Presencial'}
+                    </p>
+                  </div>
                   <div className="md:col-span-2">
                     <p className="text-sm text-muted-foreground">Nombre</p>
                     <p className="font-medium">{detailsItem.name}</p>
@@ -349,6 +362,13 @@ export function SectionsPage({ title }: Props) {
                       onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
                     />
                   </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-muted-foreground">Sección virtual</label>
+                    <Switch
+                      checked={!!editItem.isVirtual}
+                      onCheckedChange={(v: boolean) => setEditItem({ ...editItem, isVirtual: !!v })}
+                    />
+                  </div>
                   {user?.role === 'administrador' ? (
                     <div>
                       <label className="text-sm text-muted-foreground">Profesor</label>
@@ -392,6 +412,7 @@ export function SectionsPage({ title }: Props) {
                             name: editItem.name.trim(),
                             courseId,
                             teacherId,
+                            isVirtual: !!editItem.isVirtual,
                           })
                           setEditOpen(false)
                           await alertSuccess(
@@ -407,6 +428,7 @@ export function SectionsPage({ title }: Props) {
                               name: s.name,
                               slug: s.slug,
                               teacherId: s.teacherId,
+                              isVirtual: s.isVirtual ?? false,
                               courseName: s.courseName ?? res?.courseName,
                               courseSlug: s.courseSlug ?? res?.courseSlug,
                               studentsCount: s.studentsCount,
@@ -463,6 +485,10 @@ export function SectionsPage({ title }: Props) {
                     onChange={(e) => setNewSectionName(e.target.value)}
                     placeholder="Ej. Sección A"
                   />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-muted-foreground">Sección virtual</label>
+                  <Switch checked={newSectionVirtual} onCheckedChange={setNewSectionVirtual} />
                 </div>
                 {user?.role === 'administrador' ? (
                   <div>

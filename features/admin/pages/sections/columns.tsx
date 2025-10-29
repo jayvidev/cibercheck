@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { DataTableRowActions } from '@admin/components/data-table'
 
+import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { withMetaLabelHeader } from '@/lib/with-meta-label-header'
 
@@ -37,6 +38,20 @@ export function columns(opts?: {
       ),
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: 'isVirtual',
+      header: 'Modalidad',
+      cell: ({ getValue }) => {
+        const v = getValue<boolean | undefined>()
+        const isVirtual = !!v
+        return (
+          <Badge variant={isVirtual ? 'default' : 'secondary'}>
+            {isVirtual ? 'Virtual' : 'Presencial'}
+          </Badge>
+        )
+      },
+      enableSorting: false,
     },
     {
       accessorKey: 'name',

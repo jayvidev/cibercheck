@@ -1,17 +1,18 @@
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getCourseById } from '@/lib/endpoints/courses'
 import { getSection } from '@/lib/endpoints/sections'
 import { getUser } from '@/lib/endpoints/users'
-
 interface SectionDto {
   sectionId: number
   courseId: number
   teacherId: number
   name: string
   slug: string
+  isVirtual?: boolean
 }
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -77,6 +78,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <div>
               <div className="text-sm text-muted-foreground">Nombre</div>
               <div className="font-medium">{data.name}</div>
+            </div>
+            <div>
+              <div className="text-sm text-muted-foreground">Modalidad</div>
+              <div>
+                <Badge variant={data.isVirtual ? 'default' : 'secondary'}>
+                  {data.isVirtual ? 'Virtual' : 'Presencial'}
+                </Badge>
+              </div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Curso</div>
