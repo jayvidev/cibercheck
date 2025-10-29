@@ -2,12 +2,19 @@
 
 import { useState } from 'react'
 
-import { ArrowLeft, Calendar1, Layers, Monitor, University, Users } from 'lucide-react'
+import { Calendar1, Hash, Layers, Monitor, University, Users } from 'lucide-react'
 import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 
-import { Button } from '@/components/ui/button'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -201,19 +208,27 @@ export function CourseSectionsContent({
 
   return (
     <>
-      <Link href="/">
-        <Button variant="ghost" className="mb-6">
-          <ArrowLeft className="size-4" />
-          Volver a cursos
-        </Button>
-      </Link>
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Cursos</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{courseData.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       <div className="mb-8 space-y-4">
         <div className="flex items-start gap-4">
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{courseData.code}</p>
+            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
+              <Hash className="size-4" />
+              {courseData.code}
+            </p>
           </div>
         </div>
       </div>

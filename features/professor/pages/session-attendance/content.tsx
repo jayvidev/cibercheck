@@ -1,9 +1,13 @@
 'use client'
 
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-
-import { Button } from '@/components/ui/button'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { AttendanceTable } from './attendance-table'
@@ -14,7 +18,6 @@ interface Student {
   lastName: string
   email: string
   status: 'presente' | 'ausente' | 'tarde' | 'justificado' | 'no_registrado' | string
-  // legacy fields (optional) kept for compatibility
   name?: string
   studentId?: string
   attendance?: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
@@ -76,12 +79,27 @@ export function SessionAttendanceContent({
 }: SessionAttendanceContentProps) {
   return (
     <>
-      <Link href={`/curso/${courseSlug}/${sectionSlug}`}>
-        <Button variant="ghost" className="mb-6">
-          <ArrowLeft className="size-4" />
-          Volver a sesiones
-        </Button>
-      </Link>
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Cursos</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href={`/curso/${courseSlug}`}>{courseName}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href={`/curso/${courseSlug}/${sectionSlug}`}>
+              Sección {sectionName}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Sesión {sessionNumber}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       {isLoading ? (
         <AttendanceTableSkeleton />

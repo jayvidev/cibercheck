@@ -10,6 +10,7 @@ import {
   CircleDashed,
   Clock,
   FileText,
+  Hash,
   Monitor,
   QrCode as QRCode,
   University,
@@ -42,9 +43,9 @@ interface Student {
   lastName: string
   email: string
   status: string
-  name?: string // legacy
-  studentId?: string // legacy
-  attendance?: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado' // legacy
+  name?: string
+  studentId?: string
+  attendance?: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
 }
 
 interface AttendanceTableProps {
@@ -71,7 +72,6 @@ export function AttendanceTable({
   sessionDate,
   students: initialStudents,
   courseCode,
-  sectionName,
   courseColor,
   isVirtual,
   startTime,
@@ -192,8 +192,9 @@ export function AttendanceTable({
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseName}</h1>
             <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
-              {courseCode || ''} {courseCode ? '-' : ''} Sección {sectionName || ''}
-              {sessionNumber ? ` - Sesión ${sessionNumber}` : ''} -
+              <Hash className="size-4" />
+              {courseCode || ''}
+              <span className="text-muted-foreground px-1">|</span>
               {isVirtual ? (
                 <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
               ) : (
@@ -204,22 +205,20 @@ export function AttendanceTable({
               >
                 {isVirtual ? 'Virtual' : 'Presencial'}
               </span>
-            </p>
-            <div className="flex flex-wrap gap-2 mt-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{formatDateShort(sessionDay) || sessionDate}</span>
-              </div>
+              <span className="text-muted-foreground px-1">|</span>
+              <Calendar className="size-4" />
+              <span>{formatDateShort(sessionDay) || sessionDate}</span>
               {timeRange ? (
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
+                <>
+                  <span className="text-muted-foreground px-1">|</span>
+                  <Clock className="size-4" />
                   <span>{timeRange}</span>
-                </div>
+                </>
               ) : null}
-            </div>
+            </p>
           </div>
           <Button onClick={() => setQrModalOpen(true)} className="gap-2">
-            <QRCode className="h-4 w-4" />
+            <QRCode className="size-4" />
             Generar QR
           </Button>
         </div>

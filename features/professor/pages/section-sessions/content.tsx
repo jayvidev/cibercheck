@@ -5,13 +5,13 @@ import { useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import {
-  ArrowLeft,
   Calendar,
   Calendar1,
   CheckCircle2,
   CircleDashed,
   Clock,
   FileText,
+  Hash,
   Monitor,
   University,
   XCircle,
@@ -20,7 +20,14 @@ import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 
-import { Button } from '@/components/ui/button'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -298,12 +305,21 @@ export function SectionSessionsContent({
 
   return (
     <>
-      <Link href={`/curso/${courseSlug}`}>
-        <Button variant="ghost" className="mb-6">
-          <ArrowLeft className="size-4" />
-          Volver a secciones
-        </Button>
-      </Link>
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Cursos</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href={`/curso/${courseSlug}`}>{courseData.name}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Sección {sectionName}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       <div className="mb-8 space-y-4">
         <div className="flex items-start gap-4">
@@ -311,7 +327,9 @@ export function SectionSessionsContent({
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
             <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
-              {courseData.code} - Sección {sectionName} -
+              <Hash className="size-4" />
+              {courseData.code}
+              <span className="text-muted-foreground px-1">|</span>
               {isVirtual ? (
                 <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
               ) : (
