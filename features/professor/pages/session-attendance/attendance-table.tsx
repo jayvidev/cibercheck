@@ -23,6 +23,15 @@ import { DataTable } from '@admin/components/data-table'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
@@ -80,6 +89,8 @@ export function AttendanceTable({
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [changedMap, setChangedMap] = useState<Record<string, string>>({})
+  const [bulkStatus, setBulkStatus] = useState<string>('')
+  const [bulkDialogOpen, setBulkDialogOpen] = useState(false)
 
   const originalStatusesRef = useRef<Record<string, string>>({})
 
@@ -365,14 +376,13 @@ export function AttendanceTable({
       id: 'firstName',
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       header: withMetaLabelHeader<Student>(),
-      meta: { searchable: true },
       cell: ({ row }) => <span className="font-medium">{row.original.firstName}</span>,
+      meta: { searchable: true },
     },
     {
       id: 'lastName',
       accessorFn: (row) => row.lastName,
       header: withMetaLabelHeader<Student>(),
-      meta: { searchable: true },
       cell: ({ getValue }) => <span className="font-medium">{getValue<string>()}</span>,
     },
     {
@@ -387,7 +397,7 @@ export function AttendanceTable({
           value={row.original.status}
           onValueChange={(value) => updateStatus(row.original.id, value)}
         >
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger>
             <div className="flex items-center gap-2">{renderBadge(getValue<string>())}</div>
           </SelectTrigger>
           <SelectContent>
@@ -545,7 +555,23 @@ export function AttendanceTable({
           </div>
         </>
       ) : (
-        <DataTable columns={columns} data={students} resource="attendance" clean />
+        <>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="outline" onClick={() => setBulkDialogOpen(true)}>
+                Estado masivo
+              </Button>
+              {bulkStatus ? (
+                <span className="text-sm text-muted-foreground">
+                  Seleccionado: <strong>{statusLabel(bulkStatus)}</strong>
+                </span>
+              ) : null}
+            </div>
+            <div />
+          </div>
+
+          <DataTable columns={columns} data={students} resource="attendance" clean />
+        </>
       )}
 
       <QRModal
@@ -556,6 +582,66 @@ export function AttendanceTable({
         sessionNumber={sessionNumber}
         courseName={courseName}
       />
+
+      <Dialog open={bulkDialogOpen} onOpenChange={setBulkDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Aplicar estado a todos</DialogTitle>
+            <DialogDescription>
+              Selecciona el estado que quieras asignar a todos los estudiantes de esta sesión.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-2">
+            <RadioGroup value={bulkStatus} onValueChange={(v) => setBulkStatus(v)}>
+              <div className="flex flex-col gap-3">
+                <label className="flex items-center gap-2">
+                  <RadioGroupItem value="presente" />
+                  <span className="text-sm">Presente</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <RadioGroupItem value="ausente" />
+                  <span className="text-sm">Falto</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <RadioGroupItem value="tarde" />
+                  <span className="text-sm">Tarde</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <RadioGroupItem value="justificado" />
+                  <span className="text-sm">Justificado</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <RadioGroupItem value="no_registrado" />
+                  <span className="text-sm">No registrado</span>
+                </label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setBulkDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => {
+                if (!bulkStatus) return
+                const nextStudents = students.map((s) => ({ ...s, status: bulkStatus }))
+                setStudents(nextStudents)
+                const nextChanged: Record<string, string> = {}
+                nextStudents.forEach((s) => {
+                  const original = originalStatusesRef.current[s.id] ?? 'no_registrado'
+                  if (s.status !== original) nextChanged[s.id] = s.status
+                })
+                setChangedMap(nextChanged)
+                setBulkDialogOpen(false)
+              }}
+            >
+              Aplicar a todos
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
