@@ -10,13 +10,6 @@ import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface Course {
@@ -146,9 +139,6 @@ export function HomePageContent({
 }: HomePageContentProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(currentViewMode)
-  const [periodFilter, setPeriodFilter] = useState('all')
-  const [courseFilter, setCourseFilter] = useState('all')
-  const [itemsPerPage, setItemsPerPage] = useState('10')
 
   const filteredCourses = courses.filter(
     (course) =>
@@ -183,42 +173,6 @@ export function HomePageContent({
                 <Search />
               </InputGroupAddon>
             </InputGroup>
-          </div>
-
-          <div className="flex flex-wrap gap-3 w-full lg:w-auto">
-            <Select value={periodFilter} onValueChange={setPeriodFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Períodos" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los períodos</SelectItem>
-                <SelectItem value="2025-1">2025-1</SelectItem>
-                <SelectItem value="2024-2">2024-2</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={courseFilter} onValueChange={setCourseFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filtros" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los cursos</SelectItem>
-                <SelectItem value="open">Abiertos</SelectItem>
-                <SelectItem value="closed">Cerrados</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={itemsPerPage} onValueChange={setItemsPerPage}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
