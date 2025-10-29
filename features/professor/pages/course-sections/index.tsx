@@ -9,6 +9,7 @@ interface Section {
   sectionName: string
   totalSessions: number
   totalStudents: number
+  isVirtual: boolean
 }
 
 interface Course {
@@ -57,7 +58,6 @@ async function getSectionData(courseSlug: string): Promise<Section[]> {
 async function getCourseData(teacherId: number): Promise<Course | null> {
   try {
     const courses = await listCoursesByTeacher<Course[]>(teacherId)
-    // En un caso real, aquí filtrarías por courseSlug, pero por ahora retornamos el primero
     return courses.length > 0 ? courses[0] : null
   } catch (error) {
     console.error('Error fetching course:', error)

@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 
-import { ArrowLeft, BookOpen } from 'lucide-react'
+import { ArrowLeft, Building, Calendar1, Monitor, Users } from 'lucide-react'
 import Link from 'next/link'
 
 import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface SectionCardProps {
@@ -17,7 +17,7 @@ interface SectionCardProps {
   sectionName: string
   totalSessions: number
   totalStudents: number
-  color?: string
+  isVirtual: boolean
 }
 
 function SectionCard({
@@ -26,39 +26,44 @@ function SectionCard({
   sectionName,
   totalSessions,
   totalStudents,
-  color = '#3b82f6',
+  isVirtual,
 }: SectionCardProps) {
   return (
     <Link href={`/curso/${courseSlug}/${sectionSlug}`}>
-      <Card className="group overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer h-full py-0">
-        <div className="flex h-full">
-          <div className="w-1 transition-all group-hover:w-2" style={{ backgroundColor: color }} />
-          <CardContent className="flex-1 p-6 flex flex-col justify-between">
-            <div>
-              <div className="flex items-start justify-between mb-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
-                  style={{ backgroundColor: `${color}20` }}
-                >
-                  <BookOpen className="h-5 w-5" style={{ color }} />
-                </div>
-              </div>
-              <h3 className="font-semibold text-lg leading-tight text-balance mb-2">
-                {sectionName}
-              </h3>
+      <Card className="overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] h-full cursor-pointer">
+        <CardHeader className="pb-3">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold">Sección</p>
+            <h3 className="font-semibold text-lg leading-tight text-balance">{sectionName}</h3>
+            <div className="flex items-center gap-1.5">
+              {isVirtual ? (
+                <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
+              ) : (
+                <Building className="size-4 text-green-600 dark:text-green-400" />
+              )}
+              <p
+                className={`text-sm font-medium ${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
+              >
+                {isVirtual ? 'Virtual' : 'Presencial'}
+              </p>
             </div>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex justify-between">
-                <span>Sesiones:</span>
-                <span className="font-medium text-foreground">{totalSessions}</span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="pt-2 border-t">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Estadísticas</p>
+            <div className="flex gap-3">
+              <div className="flex items-center gap-1.5">
+                <Calendar1 className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium">{totalSessions} sesiones</span>
               </div>
-              <div className="flex justify-between">
-                <span>Estudiantes:</span>
-                <span className="font-medium text-foreground">{totalStudents}</span>
+              <div className="flex items-center gap-1.5">
+                <Users className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium">{totalStudents} estudiantes</span>
               </div>
             </div>
-          </CardContent>
-        </div>
+          </div>
+        </CardContent>
       </Card>
     </Link>
   )
@@ -70,22 +75,36 @@ function SectionListItem({
   sectionName,
   totalSessions,
   totalStudents,
-  color = '#3b82f6',
+  isVirtual,
 }: SectionCardProps) {
   return (
     <Link href={`/curso/${courseSlug}/${sectionSlug}`}>
       <div className="group flex items-center gap-4 rounded-lg border bg-card p-4 mb-3 transition-all hover:shadow-md cursor-pointer">
-        <div
-          className="h-16 w-1 rounded-full transition-all group-hover:w-2"
-          style={{ backgroundColor: color }}
-        />
-
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-2">
+          <p className="text-sm font-semibold">Sección</p>
           <h3 className="font-semibold text-lg leading-tight text-balance">{sectionName}</h3>
-          <p className="text-sm text-muted-foreground">
-            {totalSessions} {totalSessions === 1 ? 'sesión' : 'sesiones'} • {totalStudents}{' '}
-            {totalStudents === 1 ? 'estudiante' : 'estudiantes'}
-          </p>
+          <div className="flex items-center gap-1.5">
+            {isVirtual ? (
+              <Monitor className="size-4 text-blue-600 dark:text-blue-400" />
+            ) : (
+              <Building className="size-4 text-green-600 dark:text-green-400" />
+            )}
+            <p
+              className={`text-sm font-medium ${isVirtual ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
+            >
+              {isVirtual ? 'Virtual' : 'Presencial'}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 sm:border-l sm:pl-4 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <Calendar1 className="size-4 text-muted-foreground" />
+            <span className="text-sm font-medium">{totalSessions} sesiones</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users className="size-4 text-muted-foreground" />
+            <span className="text-sm font-medium">{totalStudents} estudiantes</span>
+          </div>
         </div>
       </div>
     </Link>
@@ -99,7 +118,7 @@ function SectionSkeletonCard() {
         <Skeleton className="w-1" />
         <CardContent className="flex-1 p-6 flex flex-col justify-between">
           <div>
-            <Skeleton className="h-10 w-10 mb-3 rounded-lg" />
+            <Skeleton className="size-10 mb-3 rounded-lg" />
             <Skeleton className="h-6 w-3/4 mb-2" />
           </div>
           <div className="space-y-2">
@@ -129,6 +148,7 @@ interface Section {
   sectionName: string
   totalSessions: number
   totalStudents: number
+  isVirtual: boolean
 }
 
 interface Course {
@@ -220,7 +240,7 @@ export function CourseSectionsContent({
                 sectionName={section.sectionName}
                 totalSessions={section.totalSessions}
                 totalStudents={section.totalStudents}
-                color={courseColor}
+                isVirtual={section.isVirtual}
               />
             ))}
           </div>
@@ -234,7 +254,7 @@ export function CourseSectionsContent({
                 sectionName={section.sectionName}
                 totalSessions={section.totalSessions}
                 totalStudents={section.totalStudents}
-                color={courseColor}
+                isVirtual={section.isVirtual}
               />
             ))}
           </div>
