@@ -19,7 +19,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { alertError, alertSuccess } from '@/lib/alerts'
-// API endpoints
 import { createCourse, getCourseSections, listCourses, updateCourse } from '@/lib/endpoints/courses'
 
 import { columns as buildColumns } from './columns'

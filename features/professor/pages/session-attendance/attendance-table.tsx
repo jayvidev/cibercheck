@@ -441,7 +441,7 @@ export function AttendanceTable({
               ) : (
                 <>
                   <RefreshCw className="size-4" />
-                  {'Recargar tabla'}
+                  {'Recargar'}
                 </>
               )}
             </Button>
