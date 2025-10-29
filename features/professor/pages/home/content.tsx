@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { BookOpen, Layers, Search, Star } from 'lucide-react'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import { ViewModeSwitcher } from '@professor/components/view-mode-switcher'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
+import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface Course {
@@ -22,20 +23,55 @@ interface Course {
 }
 
 interface CourseCardProps {
+  id: string
   courseSlug: string
   code: string
   name: string
   totalSections: number
   color: string
+  isFavorite?: boolean
+  toggleFavorite?: (id: string) => void
 }
 
-function CourseCard({ courseSlug, code, name, totalSections, color }: CourseCardProps) {
+function CourseCard({
+  id,
+  courseSlug,
+  code,
+  name,
+  totalSections,
+  color,
+  isFavorite,
+  toggleFavorite,
+}: CourseCardProps) {
   return (
     <Link href={`/curso/${courseSlug}`}>
-      <Card className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer h-full py-0">
+      <Card className="relative group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer h-full py-0">
         <div className="flex h-full">
           <div className="w-1 transition-all group-hover:w-2" style={{ backgroundColor: color }} />
           <CardContent className="flex-1 p-6 flex flex-col justify-between">
+            <div className="absolute right-3 top-3">
+              {toggleFavorite && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    toggleFavorite(id)
+                  }}
+                  aria-pressed={!!isFavorite}
+                  title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                >
+                  {isFavorite ? (
+                    <Star
+                      className="size-4 text-yellow-400 dark:text-yellow-300"
+                      fill="currentColor"
+                    />
+                  ) : (
+                    <Star className="size-4 text-muted-foreground" />
+                  )}
+                </Button>
+              )}
+            </div>
             <div>
               <div className="flex items-start justify-between mb-3">
                 <div
@@ -61,7 +97,16 @@ function CourseCard({ courseSlug, code, name, totalSections, color }: CourseCard
   )
 }
 
-function CourseListItem({ courseSlug, code, name, totalSections, color }: CourseCardProps) {
+function CourseListItem({
+  id,
+  courseSlug,
+  code,
+  name,
+  totalSections,
+  color,
+  isFavorite,
+  toggleFavorite,
+}: CourseCardProps) {
   return (
     <Link href={`/curso/${courseSlug}`}>
       <div className="group flex items-center gap-4 rounded-lg border bg-card p-4 mb-3 transition-all hover:shadow-md">
@@ -83,9 +128,18 @@ function CourseListItem({ courseSlug, code, name, totalSections, color }: Course
           variant="ghost"
           size="icon"
           className="shrink-0"
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleFavorite?.(id)
+          }}
+          aria-pressed={!!isFavorite}
+          title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
         >
-          <Star className="size-4 text-muted-foreground" />
+          {isFavorite ? (
+            <Star className="size-4 text-yellow-400 dark:text-yellow-300" fill="currentColor" />
+          ) : (
+            <Star className="size-4 text-muted-foreground" />
+          )}
         </Button>
       </div>
     </Link>
@@ -140,11 +194,33 @@ export function HomePageContent({
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(currentViewMode)
 
-  const filteredCourses = courses.filter(
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return []
+    try {
+      return JSON.parse(localStorage.getItem('favoriteCourses') || '[]')
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('favoriteCourses', JSON.stringify(favoriteIds))
+    } catch {}
+  }, [favoriteIds])
+
+  const toggleFavorite = (id: string) => {
+    setFavoriteIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [id, ...prev]))
+  }
+
+  const filtered = courses.filter(
     (course) =>
       course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.code.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const favoriteCourses = filtered.filter((c) => favoriteIds.includes(c.id))
+  const otherCourses = filtered.filter((c) => !favoriteIds.includes(c.id))
 
   const handleViewModeChange = async (newViewMode: 'grid' | 'list') => {
     setViewMode(newViewMode)
@@ -177,7 +253,7 @@ export function HomePageContent({
         </div>
 
         <p className="text-sm text-muted-foreground">
-          {filteredCourses.length} {filteredCourses.length === 1 ? 'resultado' : 'resultados'}
+          {filtered.length} {filtered.length === 1 ? 'resultado' : 'resultados'}
         </p>
       </div>
 
@@ -195,17 +271,73 @@ export function HomePageContent({
             ))}
           </div>
         )
-      ) : filteredCourses.length > 0 ? (
+      ) : filtered.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
+            {favoriteCourses.length > 0 && (
+              <>
+                <div className="col-span-full">
+                  <h4 className="text-sm font-semibold text-muted-foreground">Favoritos</h4>
+                </div>
+
+                {favoriteCourses.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    {...course}
+                    isFavorite={favoriteIds.includes(course.id)}
+                    toggleFavorite={toggleFavorite}
+                  />
+                ))}
+              </>
+            )}
+
+            {otherCourses.length > 0 && favoriteCourses.length > 0 && (
+              <div className="col-span-full my-2">
+                <Separator />
+              </div>
+            )}
+
+            {otherCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                {...course}
+                isFavorite={favoriteIds.includes(course.id)}
+                toggleFavorite={toggleFavorite}
+              />
             ))}
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredCourses.map((course) => (
-              <CourseListItem key={course.id} {...course} />
+            {favoriteCourses.length > 0 && (
+              <>
+                <div>
+                  <h4 className="text-sm font-semibold text-muted-foreground mb-2">Favoritos</h4>
+                </div>
+
+                {favoriteCourses.map((course) => (
+                  <CourseListItem
+                    key={course.id}
+                    {...course}
+                    isFavorite={favoriteIds.includes(course.id)}
+                    toggleFavorite={toggleFavorite}
+                  />
+                ))}
+              </>
+            )}
+
+            {otherCourses.length > 0 && favoriteCourses.length > 0 && (
+              <div className="w-full py-2">
+                <hr className="border-t" />
+              </div>
+            )}
+
+            {otherCourses.map((course) => (
+              <CourseListItem
+                key={course.id}
+                {...course}
+                isFavorite={favoriteIds.includes(course.id)}
+                toggleFavorite={toggleFavorite}
+              />
             ))}
           </div>
         )
