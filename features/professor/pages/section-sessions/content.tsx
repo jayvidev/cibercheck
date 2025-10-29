@@ -304,7 +304,9 @@ export function SectionSessionsContent({
         <div className="flex items-start gap-4">
           <div className="h-16 w-1 rounded-full" style={{ backgroundColor: courseColor }} />
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight text-balance">{courseData.name}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-balance uppercase">
+              {courseData.name}
+            </h1>
             <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
               {courseData.code} - Sección {sectionName} -
               {isVirtual ? (
