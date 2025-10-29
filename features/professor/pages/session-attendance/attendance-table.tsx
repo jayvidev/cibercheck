@@ -13,6 +13,7 @@ import {
   Hash,
   Monitor,
   QrCode as QRCode,
+  RefreshCw,
   University,
   XCircle,
 } from 'lucide-react'
@@ -421,6 +422,26 @@ export function AttendanceTable({
                 <>
                   <CheckCircle2 className="size-4" />
                   {updateButtonLabel}
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={() => {
+                void fetchAttendance()
+              }}
+              variant="outline"
+              className="gap-2"
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? (
+                <>
+                  <Spinner />
+                  {'Recargando'}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="size-4" />
+                  {'Recargar tabla'}
                 </>
               )}
             </Button>
