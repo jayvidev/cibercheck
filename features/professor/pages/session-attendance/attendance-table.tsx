@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
 import {
   Table,
   TableBody,
@@ -35,7 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getAttendanceBySession } from '@/lib/endpoints/sessions'
+import { bulkMarkAttendance, getAttendanceBySession } from '@/lib/endpoints/sessions'
 
 import { QRModal } from './qr-modal'
 
@@ -54,6 +55,7 @@ interface AttendanceTableProps {
   courseSlug: string
   sectionSlug: string
   sessionNumber: string
+  sessionId?: number
   courseName: string
   sessionDate: string
   students: Student[]
@@ -70,6 +72,7 @@ export function AttendanceTable({
   courseSlug,
   sectionSlug,
   sessionNumber,
+  sessionId,
   courseName,
   sessionDate,
   students: initialStudents,
@@ -83,8 +86,13 @@ export function AttendanceTable({
   const [students, setStudents] = useState(initialStudents)
   const [qrModalOpen, setQrModalOpen] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isSending, setIsSending] = useState(false)
+  const [changedMap, setChangedMap] = useState<Record<string, string>>({})
+
+  const originalStatusesRef = useRef<Record<string, string>>({})
 
   const prevQrOpenRef = useRef<boolean>(false)
+  const fetchedSessionIdRef = useRef<number | undefined>(undefined)
 
   function formatTime(time?: string) {
     if (!time) return ''
@@ -122,25 +130,52 @@ export function AttendanceTable({
     : ''
 
   const updateStatus = (studentId: string, status: string) => {
-    setStudents(students.map((s) => (s.id === studentId ? { ...s, status } : s)))
+    setStudents((prev) => prev.map((s) => (s.id === studentId ? { ...s, status } : s)))
+
+    const original = originalStatusesRef.current[studentId] ?? 'no_registrado'
+    setChangedMap((prev) => {
+      const next = { ...prev }
+      if (status !== original) {
+        next[studentId] = status
+      } else {
+        delete next[studentId]
+      }
+      return next
+    })
   }
 
-  const fetchAttendance = async () => {
+  type APISessionAttendance = {
+    sessionId?: number
+    students: Array<{
+      studentId: number
+      firstName: string
+      lastName: string
+      email: string
+      status: string
+      notes?: string | null
+    }>
+  }
+
+  const fetchAttendance = useCallback(async () => {
     try {
       setIsRefreshing(true)
       console.warn('[AttendanceTable] Fetching updated attendance...')
-      const apiResponse = (await getAttendanceBySession(
+      const apiResponse = await getAttendanceBySession<APISessionAttendance>(
         courseSlug,
         sectionSlug,
         sessionNumber
-      )) as any
+      )
 
       if (!apiResponse || !Array.isArray(apiResponse.students)) {
         console.warn('[AttendanceTable] Unexpected attendance response:', apiResponse)
         return
       }
 
-      const mappedStudents: Student[] = apiResponse.students.map((student: any) => ({
+      if (typeof apiResponse.sessionId === 'number') {
+        fetchedSessionIdRef.current = apiResponse.sessionId
+      }
+
+      const mappedStudents: Student[] = apiResponse.students.map((student) => ({
         id: `${student.studentId}`,
         firstName: student.firstName,
         lastName: student.lastName,
@@ -151,20 +186,33 @@ export function AttendanceTable({
       }))
 
       setStudents(mappedStudents)
+      const snapshot: Record<string, string> = {}
+      mappedStudents.forEach((s) => {
+        snapshot[s.id] = s.status || 'no_registrado'
+      })
+      originalStatusesRef.current = snapshot
+      setChangedMap({})
     } catch (err) {
       console.error('[AttendanceTable] Error fetching attendance:', err)
     } finally {
       setIsRefreshing(false)
     }
-  }
+  }, [courseSlug, sectionSlug, sessionNumber])
 
   useEffect(() => {
     if (prevQrOpenRef.current && !qrModalOpen) {
       void fetchAttendance()
     }
     prevQrOpenRef.current = qrModalOpen
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [qrModalOpen])
+  }, [qrModalOpen, fetchAttendance])
+
+  useEffect(() => {
+    const snapshot: Record<string, string> = {}
+    initialStudents.forEach((s) => (snapshot[s.id] = s.status || 'no_registrado'))
+    originalStatusesRef.current = snapshot
+    setStudents(initialStudents)
+    setChangedMap({})
+  }, [initialStudents])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -190,6 +238,54 @@ export function AttendanceTable({
     tarde: students.filter((s) => s.status === 'tarde').length,
     justificado: students.filter((s) => s.status === 'justificado').length,
     no_registrado: students.filter((s) => s.status === 'no_registrado').length,
+  }
+
+  const hasChanges = Object.keys(changedMap).length > 0
+
+  const updateButtonLabel = hasChanges
+    ? `Actualizar asistencia (${Object.keys(changedMap).length})`
+    : 'Actualizar asistencia'
+
+  const handleBulkUpdate = async () => {
+    if (!hasChanges) return
+    const sessionIdToUse =
+      typeof sessionId === 'number' && !Number.isNaN(sessionId)
+        ? sessionId
+        : typeof fetchedSessionIdRef.current === 'number' &&
+            !Number.isNaN(fetchedSessionIdRef.current)
+          ? fetchedSessionIdRef.current
+          : Number(sessionNumber)
+
+    if (!sessionIdToUse || Number.isNaN(sessionIdToUse)) {
+      console.warn(
+        '[AttendanceTable] sessionId is not provided and sessionNumber is not a valid number for bulk update',
+        sessionNumber
+      )
+      return
+    }
+
+    const items = Object.entries(changedMap)
+      .map(([id, status]) => {
+        const sid = Number(id)
+        if (Number.isNaN(sid)) return null
+        return { StudentId: sid, Status: status }
+      })
+      .filter(Boolean) as { StudentId: number; Status: string }[]
+
+    if (items.length === 0) return
+
+    try {
+      setIsSending(true)
+      await bulkMarkAttendance({ SessionId: sessionIdToUse, Items: items })
+      const snapshot: Record<string, string> = {}
+      students.forEach((s) => (snapshot[s.id] = s.status || 'no_registrado'))
+      originalStatusesRef.current = snapshot
+      setChangedMap({})
+    } catch (err) {
+      console.error('[AttendanceTable] bulk update failed:', err)
+    } finally {
+      setIsSending(false)
+    }
   }
 
   const statsCards = [
@@ -267,10 +363,30 @@ export function AttendanceTable({
               ) : null}
             </p>
           </div>
-          <Button onClick={() => setQrModalOpen(true)} className="gap-2">
-            <QRCode className="size-4" />
-            Generar QR
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleBulkUpdate}
+              variant="secondary"
+              className="gap-2"
+              disabled={!hasChanges || isSending}
+            >
+              {isSending ? (
+                <>
+                  <Spinner />
+                  {'Enviando'}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="size-4" />
+                  {updateButtonLabel}
+                </>
+              )}
+            </Button>
+            <Button onClick={() => setQrModalOpen(true)} className="gap-2">
+              <QRCode className="size-4" />
+              Generar QR
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -340,9 +456,9 @@ export function AttendanceTable({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="presente">Presente</SelectItem>
-                          <SelectItem value="tarde">Tarde</SelectItem>
-                          <SelectItem value="ausente">Ausente</SelectItem>
+                          <SelectItem value="presente">Asistió</SelectItem>
+                          <SelectItem value="tarde">Tardanza</SelectItem>
+                          <SelectItem value="ausente">Faltó</SelectItem>
                           <SelectItem value="justificado">Justificado</SelectItem>
                           <SelectItem value="no_registrado">No registrado</SelectItem>
                         </SelectContent>

@@ -27,6 +27,7 @@ interface SessionAttendanceContentProps {
   courseSlug: string
   sectionSlug: string
   sessionNumber: string
+  sessionId?: number
   courseName?: string
   sessionDate?: string
   students?: Student[]
@@ -65,6 +66,7 @@ export function SessionAttendanceContent({
   courseSlug,
   sectionSlug,
   sessionNumber,
+  sessionId,
   courseName = 'Cargando...',
   sessionDate = '',
   students = [],
@@ -108,6 +110,7 @@ export function SessionAttendanceContent({
           courseSlug={courseSlug}
           sectionSlug={sectionSlug}
           sessionNumber={sessionNumber}
+          sessionId={sessionId}
           courseName={courseName}
           sessionDate={sessionDate}
           students={students}

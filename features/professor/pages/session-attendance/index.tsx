@@ -5,6 +5,7 @@ import { getAttendanceBySession } from '@/lib/endpoints/sessions'
 import { SessionAttendanceContent } from './content'
 
 interface APIAttendanceResponse {
+  sessionId?: number
   courseSlug: string
   courseName: string
   courseCode: string
@@ -39,6 +40,7 @@ interface Student {
 }
 
 interface Attendance {
+  sessionId?: number
   students: Student[]
   courseName: string
   sessionDate: string
@@ -176,6 +178,7 @@ async function getSessionAttendance(
     }
 
     const attendance: Attendance = {
+      sessionId: apiResponse.sessionId,
       students: mappedStudents,
       courseName: apiResponse.courseName,
       sessionDate: sessionDateStr,
@@ -219,6 +222,7 @@ export async function SessionAttendancePage({
       courseSlug={courseSlug}
       sectionSlug={sectionSlug}
       sessionNumber={sessionNumber}
+      sessionId={attendance?.sessionId}
       courseName={attendance?.courseName}
       sessionDate={attendance?.sessionDate}
       students={attendance?.students}

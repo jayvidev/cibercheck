@@ -1,19 +1,15 @@
 import { fetchJson, type Schema } from '@/lib/api'
 
-// Endpoints for Sessions resource
-
 export type SessionUpdatePayload = {
-  // Define when backend provides ID-based update payload; placeholder for future
-  // Example: title?: string; date?: string; etc.
   [key: string]: unknown
 }
 
 export type SessionCreatePayload = {
   sectionId: number
   sessionNumber: number
-  date: string // yyyy-MM-dd
-  startTime?: string // HH:mm or HH:mm:ss
-  endTime?: string // HH:mm or HH:mm:ss
+  date: string
+  startTime?: string
+  endTime?: string
   topic?: string
 }
 
@@ -109,4 +105,22 @@ export async function getCurrentQRToken<T = unknown>(
     path: `/api/v1/attendances/qr/course/${courseSlug}/section/${sectionSlug}/session/${sessionNumber}/current`,
     schema,
   })
+}
+
+export type BulkAttendanceItem = {
+  StudentId: number
+  Status: string
+  Notes?: string
+}
+
+export type BulkAttendancePayload = {
+  SessionId: number
+  Items: BulkAttendanceItem[]
+}
+
+export async function bulkMarkAttendance<T = unknown>(
+  body: BulkAttendancePayload,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({ path: `/api/v1/attendances/bulk-mark`, method: 'POST', body, schema })
 }
