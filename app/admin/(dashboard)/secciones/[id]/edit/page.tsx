@@ -17,8 +17,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { listCourses } from '@/lib/endpoints/courses'
-import { listUsers } from '@/lib/endpoints/users'
 import { getSection, updateSection } from '@/lib/endpoints/sections'
+import { listUsers } from '@/lib/endpoints/users'
 
 interface SectionDto {
   sectionId: number

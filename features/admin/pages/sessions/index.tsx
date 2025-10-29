@@ -5,14 +5,8 @@ import * as React from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -21,7 +15,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import { alertError, alertSuccess } from '@/lib/alerts'
 // API endpoints
 import { listCourses } from '@/lib/endpoints/courses'
@@ -254,6 +255,18 @@ export function SessionsPage({ title }: Props) {
               ))}
             </SelectContent>
           </Select>
+          {selectedSectionSlug
+            ? (() => {
+                const sec = sections.find((s) => s.slug === selectedSectionSlug)
+                if (!sec || typeof (sec as any).isVirtual === 'undefined') return null
+                const isVirtual = !!(sec as any).isVirtual
+                return (
+                  <Badge variant={isVirtual ? 'default' : 'secondary'}>
+                    {isVirtual ? 'Virtual' : 'Presencial'}
+                  </Badge>
+                )
+              })()
+            : null}
         </div>
       </div>
       {error ? (

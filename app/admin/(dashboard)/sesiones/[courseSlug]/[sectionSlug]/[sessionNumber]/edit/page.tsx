@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { getSessionBySlugsNumber, updateSession } from '@/lib/endpoints/sessions'
 import { alertError, alertSuccess } from '@/lib/alerts'
+import { getSessionBySlugsNumber, updateSession } from '@/lib/endpoints/sessions'
 
 interface SessionEditForm {
   sessionId: number

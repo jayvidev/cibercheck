@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
 import { DataTable } from '@admin/components/data-table'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -17,9 +18,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { alertError, alertSuccess } from '@/lib/alerts'
 // API endpoints
 import { createCourse, getCourseSections, listCourses, updateCourse } from '@/lib/endpoints/courses'
-import { alertError, alertSuccess } from '@/lib/alerts'
 
 import { columns as buildColumns } from './columns'
 import { CategoryList, categoryListSchema } from './list.schema'
@@ -37,7 +38,7 @@ export function CategoriesPage({ title }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [detailsCourse, setDetailsCourse] = useState<CategoryList | null>(null)
   const [detailsSections, setDetailsSections] = useState<
-    { sectionId: number; name: string; slug: string; teacherId: number }[]
+    { sectionId: number; name: string; slug: string; teacherId: number; isVirtual?: boolean }[]
   >([])
   const [detailsLoading, setDetailsLoading] = useState(false)
   const [detailsError, setDetailsError] = useState<string | null>(null)
@@ -82,13 +83,15 @@ export function CategoriesPage({ title }: Props) {
     setDetailsError(null)
     setDetailsLoading(true)
     try {
-      const res = await getCourseSections<{
-        courseId: number
-        courseName: string
-        courseSlug: string
-        sections: { sectionId: number; name: string; slug: string; teacherId: number }[]
-      }>(course.slug)
-      setDetailsSections(res.sections)
+      const res = await getCourseSections<any>(course.slug)
+      const mapped = (res.sections || []).map((s: any) => ({
+        sectionId: s.sectionId,
+        name: s.name,
+        slug: s.slug,
+        teacherId: s.teacherId,
+        isVirtual: typeof s.isVirtual !== 'undefined' ? !!s.isVirtual : undefined,
+      }))
+      setDetailsSections(mapped)
     } catch (e) {
       setDetailsError(e instanceof Error ? e.message : 'Unknown error')
       setDetailsSections([])
@@ -238,11 +241,16 @@ export function CategoriesPage({ title }: Props) {
                 ) : detailsSections.length === 0 ? (
                   <p className="text-sm text-muted-foreground">No hay secciones.</p>
                 ) : (
-                  <ul className="text-sm list-disc pl-5 space-y-1">
+                  <ul className="text-sm space-y-1">
                     {detailsSections.map((s) => (
-                      <li key={s.sectionId}>
-                        <span className="font-medium">{s.name}</span>{' '}
+                      <li key={s.sectionId} className="flex items-center gap-2">
+                        <span className="font-medium">{s.name}</span>
                         <span className="text-muted-foreground">({s.slug})</span>
+                        {typeof s.isVirtual !== 'undefined' ? (
+                          <Badge variant={s.isVirtual ? 'default' : 'secondary'}>
+                            {s.isVirtual ? 'Virtual' : 'Presencial'}
+                          </Badge>
+                        ) : null}
                       </li>
                     ))}
                   </ul>
