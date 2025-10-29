@@ -11,11 +11,10 @@ export async function POST(request: NextRequest) {
 
     const cookieStore = await cookies()
 
-    // Establecer la cookie en el servidor
     cookieStore.set(name, value, {
       path: '/',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 días
+      maxAge: 60 * 60 * 24 * 7,
     })
 
     console.warn(`[API] Cookie set: ${name}`)

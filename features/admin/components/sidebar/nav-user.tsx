@@ -49,7 +49,7 @@ export function NavUser({
 
   const handleConfirmLogout = () => {
     logout()
-    router.push('/admin/iniciar-sesion')
+    router.push('/iniciar-sesion')
   }
 
   return (

@@ -21,7 +21,7 @@ export default function AccessDeniedPage() {
             <Link href="/">Volver al inicio</Link>
           </Button>
           <Button asChild>
-            <Link href="/iniciar-sesion">Iniciar sesión como profesor</Link>
+            <Link href="/iniciar-sesion">Iniciar sesión</Link>
           </Button>
         </div>
       </div>

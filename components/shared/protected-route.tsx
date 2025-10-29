@@ -20,14 +20,9 @@ export function ProtectedRoute({ children, requiredRole = 'profesor' }: Protecte
     if (isLoading) return
 
     if (!isAuthenticated) {
-      if (requiredRole === 'administrador') {
-        router.replace('/admin/iniciar-sesion')
-      } else {
-        router.replace('/iniciar-sesion')
-      }
+      router.replace('/iniciar-sesion')
       return
     }
-    console.log('User role:', user?.role, 'Required role:', requiredRole)
     if (requiredRole && user?.role !== requiredRole) {
       router.replace('/acceso-denegado')
       return

@@ -1,2 +1,2 @@
-export { ProfesorLoginForm } from '@/features/auth/login/profesor-form'
-export { ProfesorLoginPage } from '@/features/auth/login/profesor-page'
+export { ProfesorLoginForm } from '@auth/login/form'
+export { ProfesorLoginPage } from '@auth/login/page'

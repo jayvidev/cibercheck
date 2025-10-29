@@ -24,6 +24,7 @@ import {
   InputGroupText,
 } from '@/components/ui/input-group'
 import { PasswordInput } from '@/components/ui/password-input'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/context/auth-context'
 import { cn } from '@/lib/utils'
 
@@ -34,7 +35,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
+export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter()
   const { login, isAuthenticated, user } = useAuth()
 
@@ -55,7 +56,7 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
         toast.error('Los estudiantes deben ingresar por la aplicación móvil.')
         router.push('/iniciar-sesion')
       } else if (user?.role === 'admin') {
-        router.push('/admin/iniciar-sesion')
+        router.push('/admin')
       }
     }
   }, [isAuthenticated, user, router])
@@ -80,9 +81,9 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Portal de Docentes</h1>
+            <h1 className="text-2xl font-bold">Portal Web</h1>
             <p className="text-muted-foreground text-sm text-balance">
-              Ingresa con tu cuenta institucional Cibertec para registrar asistencias
+              Ingresa con tu cuenta institucional de Cibertec para gestionar asistencias.
             </p>
           </div>
 
@@ -97,7 +98,7 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
                     <InputGroup>
                       <InputGroupInput
                         id="username"
-                        placeholder="Enter your username"
+                        placeholder="Ingresa tu usuario"
                         autoComplete="username"
                         {...field}
                         aria-invalid={!!fieldState?.error}
@@ -136,6 +137,7 @@ export function ProfesorLoginForm({ className, ...props }: React.ComponentPropsW
             />
 
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && <Spinner />}
               {form.formState.isSubmitting ? 'Iniciando sesión' : 'Iniciar sesión'}
             </Button>
           </div>
