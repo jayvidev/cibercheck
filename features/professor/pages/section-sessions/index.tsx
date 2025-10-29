@@ -17,6 +17,7 @@ interface Session {
     ausente: number
     tarde: number
     justificado: number
+    no_registrado: number
   }
 }
 

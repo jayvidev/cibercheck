@@ -14,7 +14,7 @@ interface APIAttendanceResponse {
     firstName: string
     lastName: string
     email: string
-    status: 'presente' | 'ausente' | 'tarde' | 'justificado'
+    status: 'presente' | 'ausente' | 'tarde' | 'justificado' | 'no_registrado'
     notes: string | null
   }>
 }
@@ -23,7 +23,7 @@ interface Student {
   id: string
   name: string
   studentId: string
-  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado'
+  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
 }
 
 interface Attendance {
@@ -33,13 +33,14 @@ interface Attendance {
 }
 
 function mapAPIStatusToAttendance(
-  status: 'presente' | 'ausente' | 'tarde' | 'justificado'
-): 'asistio' | 'falto' | 'tardanza' | 'justificado' {
+  status: 'presente' | 'ausente' | 'tarde' | 'justificado' | 'no_registrado'
+): 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado' {
   const statusMap = {
     presente: 'asistio' as const,
     ausente: 'falto' as const,
     tarde: 'tardanza' as const,
     justificado: 'justificado' as const,
+    no_registrado: 'no_registrado' as const,
   }
   return statusMap[status]
 }

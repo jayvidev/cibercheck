@@ -12,7 +12,7 @@ interface Student {
   id: string
   name: string
   studentId: string
-  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado'
+  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
 }
 
 interface SessionAttendanceContentProps {

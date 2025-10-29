@@ -28,7 +28,7 @@ interface Student {
   id: string
   name: string
   studentId: string
-  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado'
+  attendance: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
 }
 
 interface AttendanceTableProps {
@@ -53,7 +53,7 @@ export function AttendanceTable({
 
   const updateAttendance = (
     studentId: string,
-    status: 'asistio' | 'falto' | 'tardanza' | 'justificado'
+    status: 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
   ) => {
     setStudents(students.map((s) => (s.id === studentId ? { ...s, attendance: status } : s)))
   }
@@ -68,6 +68,8 @@ export function AttendanceTable({
         return <Badge className="bg-yellow-600 hover:bg-yellow-700">Tardanza</Badge>
       case 'justificado':
         return <Badge className="bg-blue-600 hover:bg-blue-700">Justificado</Badge>
+      case 'no_registrado':
+        return <Badge className="bg-gray-600 hover:bg-gray-700">No Registrado</Badge>
       default:
         return null
     }
@@ -79,6 +81,7 @@ export function AttendanceTable({
     falto: students.filter((s) => s.attendance === 'falto').length,
     tardanza: students.filter((s) => s.attendance === 'tardanza').length,
     justificado: students.filter((s) => s.attendance === 'justificado').length,
+    no_registrado: students.filter((s) => s.attendance === 'no_registrado').length,
   }
 
   return (
@@ -117,6 +120,13 @@ export function AttendanceTable({
         </div>
       </div>
 
+      {stats.no_registrado > 0 && (
+        <div className="rounded-lg border bg-card p-4">
+          <p className="text-sm text-muted-foreground">No Registrados</p>
+          <p className="text-2xl font-bold text-gray-600">{stats.no_registrado}</p>
+        </div>
+      )}
+
       <div className="rounded-lg border overflow-hidden">
         <Table>
           <TableHeader>
@@ -139,7 +149,7 @@ export function AttendanceTable({
                     onValueChange={(value) =>
                       updateAttendance(
                         student.id,
-                        value as 'asistio' | 'falto' | 'tardanza' | 'justificado'
+                        value as 'asistio' | 'falto' | 'tardanza' | 'justificado' | 'no_registrado'
                       )
                     }
                   >
@@ -151,6 +161,7 @@ export function AttendanceTable({
                       <SelectItem value="tardanza">Tardanza</SelectItem>
                       <SelectItem value="falto">Faltó</SelectItem>
                       <SelectItem value="justificado">Justificado</SelectItem>
+                      <SelectItem value="no_registrado">No Registrado</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>

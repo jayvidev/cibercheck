@@ -24,6 +24,7 @@ interface Session {
     ausente: number
     tarde: number
     justificado: number
+    no_registrado: number
   }
 }
 
@@ -45,6 +46,8 @@ interface SessionCardProps {
   attended: number
   absent: number
   late: number
+  justified: number
+  notRegistered: number
 }
 
 function formatTime(time: string): string {
@@ -67,6 +70,8 @@ function SessionCard({
   attended,
   absent,
   late,
+  justified,
+  notRegistered,
 }: SessionCardProps) {
   return (
     <Link href={`/curso/${courseSlug}/${sectionSlug}/sesion/${sessionNumber}`}>
@@ -111,6 +116,22 @@ function SessionCard({
                 <span className="text-sm font-medium">{late}</span>
               </div>
             </div>
+            {(justified > 0 || notRegistered > 0) && (
+              <div className="flex gap-3 mt-2">
+                {justified > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium">{justified}</span>
+                  </div>
+                )}
+                {notRegistered > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <XCircle className="h-4 w-4 text-gray-600" />
+                    <span className="text-sm font-medium">{notRegistered}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -130,6 +151,8 @@ function SessionListItem({
   attended,
   absent,
   late,
+  justified,
+  notRegistered,
 }: SessionCardProps) {
   return (
     <Link href={`/curso/${courseSlug}/${sectionSlug}/sesion/${sessionNumber}`}>
@@ -153,7 +176,7 @@ function SessionListItem({
           </div>
         </div>
 
-        <div className="flex gap-4 sm:border-l sm:pl-4">
+        <div className="flex gap-2 sm:border-l sm:pl-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium">{attended}</span>
@@ -166,6 +189,18 @@ function SessionListItem({
             <AlertCircle className="h-4 w-4 text-amber-600" />
             <span className="text-sm font-medium">{late}</span>
           </div>
+          {justified > 0 && (
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">{justified}</span>
+            </div>
+          )}
+          {notRegistered > 0 && (
+            <div className="flex items-center gap-1.5">
+              <XCircle className="h-4 w-4 text-gray-600" />
+              <span className="text-sm font-medium">{notRegistered}</span>
+            </div>
+          )}
         </div>
       </div>
     </Link>
@@ -309,6 +344,8 @@ export function SectionSessionsContent({
                 attended={session.attendanceStats.presente}
                 absent={session.attendanceStats.ausente}
                 late={session.attendanceStats.tarde}
+                justified={session.attendanceStats.justificado}
+                notRegistered={session.attendanceStats.no_registrado}
               />
             ))}
           </div>
@@ -328,6 +365,8 @@ export function SectionSessionsContent({
                 attended={session.attendanceStats.presente}
                 absent={session.attendanceStats.ausente}
                 late={session.attendanceStats.tarde}
+                justified={session.attendanceStats.justificado}
+                notRegistered={session.attendanceStats.no_registrado}
               />
             ))}
           </div>
