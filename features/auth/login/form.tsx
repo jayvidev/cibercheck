@@ -70,9 +70,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const email = `${data.username}${domain}`
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Intentando login con email:', email)
-      }
       await login(email, data.password)
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'No se pudo iniciar sesión'

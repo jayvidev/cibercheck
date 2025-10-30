@@ -53,13 +53,10 @@ export async function listCoursesByTeacher<T = unknown>(
   schema?: Schema<T>
 ): Promise<T> {
   const path = `/api/v1/courses/teacher/${teacherId}`
-  console.warn('[Endpoints] listCoursesByTeacher - Calling:', path)
   try {
     const result = await fetchJson<T>({ path, schema })
-    console.warn('[Endpoints] listCoursesByTeacher - Response:', result)
     return result
   } catch (error) {
-    console.error('[Endpoints] listCoursesByTeacher - Error:', error)
     throw error
   }
 }

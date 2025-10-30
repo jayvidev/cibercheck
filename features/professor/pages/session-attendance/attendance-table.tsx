@@ -123,8 +123,7 @@ export function AttendanceTable({
         dt = new Date(dateStr)
       }
       return format(dt, 'd MMM yyyy', { locale: es })
-    } catch (err) {
-      console.warn('[AttendanceTable] formatDateShort error:', err)
+    } catch {
       return dateStr
     }
   }
@@ -163,7 +162,6 @@ export function AttendanceTable({
   const fetchAttendance = useCallback(async () => {
     try {
       setIsRefreshing(true)
-      console.warn('[AttendanceTable] Fetching updated attendance...')
       const apiResponse = await getAttendanceBySession<APISessionAttendance>(
         courseSlug,
         sectionSlug,
@@ -171,7 +169,6 @@ export function AttendanceTable({
       )
 
       if (!apiResponse || !Array.isArray(apiResponse.students)) {
-        console.warn('[AttendanceTable] Unexpected attendance response:', apiResponse)
         return
       }
 
@@ -309,10 +306,6 @@ export function AttendanceTable({
           : Number(sessionNumber)
 
     if (!sessionIdToUse || Number.isNaN(sessionIdToUse)) {
-      console.warn(
-        '[AttendanceTable] sessionId is not provided and sessionNumber is not a valid number for bulk update',
-        sessionNumber
-      )
       return
     }
 

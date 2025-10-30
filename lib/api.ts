@@ -59,8 +59,6 @@ export async function fetchJson<T = unknown>({
   includeAuth = true,
 }: FetchJsonOptions<T>): Promise<T> {
   const url = buildUrl(path)
-  console.warn('[fetchJson] URL:', url)
-  console.warn('[fetchJson] Method:', method)
 
   const initHeaders: Record<string, string> = {
     Accept: 'application/json',
@@ -81,16 +79,10 @@ export async function fetchJson<T = unknown>({
 
   if (includeAuth) {
     const token = await getAuthToken()
-    console.warn('[fetchJson] Has token:', !!token)
     if (token && !('Authorization' in initHeaders)) {
       initHeaders['Authorization'] = `Bearer ${token}`
     }
   }
-
-  console.warn('[fetchJson] Headers:', {
-    ...initHeaders,
-    Authorization: initHeaders['Authorization'] ? 'Bearer ***' : 'none',
-  })
 
   const res = await fetch(url, {
     method,
@@ -99,8 +91,6 @@ export async function fetchJson<T = unknown>({
     signal,
     cache: 'no-store',
   })
-
-  console.warn('[fetchJson] Response status:', res.status)
 
   if (!res.ok) {
     let errorBody: unknown = undefined
@@ -140,8 +130,6 @@ export async function fetchJson<T = unknown>({
   } else {
     data = (await res.text()) as unknown
   }
-
-  console.warn('[fetchJson] Response data:', data)
 
   if (schema) {
     return schema.parse(data)

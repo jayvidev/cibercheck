@@ -52,14 +52,12 @@ export function QRModal({
     setIsGenerating(true)
     setError(null)
     try {
-      console.warn('[QRModal] Generating initial QR token...')
       const response = (await generateQRToken(
         courseSlug,
         sectionSlug,
         sessionNumber
       )) as QRTokenResponse
 
-      console.warn('[QRModal] Token generated:', response)
       setQrToken(response.token)
       setCountdown(REGENERATE_INTERVAL / 1000)
     } catch (err) {
@@ -82,14 +80,12 @@ export function QRModal({
 
   const regenerateToken = async () => {
     try {
-      console.warn('[QRModal] Regenerating QR token...')
       const response = (await regenerateQRToken(
         courseSlug,
         sectionSlug,
         sessionNumber
       )) as QRTokenResponse
 
-      console.warn('[QRModal] Token regenerated:', response)
       setQrToken(response.token)
       setCountdown(REGENERATE_INTERVAL / 1000)
       setError(null)

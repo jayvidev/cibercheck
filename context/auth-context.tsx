@@ -57,10 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await saveCookieToServer(AUTH_COOKIE_NAME, newToken)
         await saveCookieToServer(USER_STORAGE_KEY, JSON.stringify(userData))
-      } catch (error) {
-        console.warn('Error saving cookies to server:', error)
-        // Continuar aunque falle guardar en servidor
-      }
+      } catch {}
 
       setToken(newToken)
       setUser(userData)

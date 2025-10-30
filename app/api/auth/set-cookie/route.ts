@@ -17,8 +17,6 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7,
     })
 
-    console.warn(`[API] Cookie set: ${name}`)
-
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[API] Error setting cookie:', error)

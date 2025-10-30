@@ -72,16 +72,8 @@ async function getSessionAttendance(
   sessionNumber: string
 ): Promise<Attendance | null> {
   try {
-    console.warn(
-      '[SessionAttendancePage] Fetching attendance for:',
-      courseSlug,
-      sectionSlug,
-      sessionNumber
-    )
-
     const user = await getUserFromCookie()
     if (!user) {
-      console.warn('[SessionAttendancePage] No user found')
       return null
     }
 
@@ -90,8 +82,6 @@ async function getSessionAttendance(
       sectionSlug,
       sessionNumber
     )) as APIAttendanceResponse
-
-    console.warn('[SessionAttendancePage] API Response:', apiResponse)
 
     const mappedStudents: Student[] = apiResponse.students.map((student) => ({
       id: `${student.studentId}`,
@@ -167,8 +157,7 @@ async function getSessionAttendance(
           day: 'numeric',
         })
       }
-    } catch (err) {
-      console.warn('[SessionAttendancePage] Error parsing session date:', err)
+    } catch {
       const now = new Date()
       sessionDateStr = now.toLocaleDateString('es-ES', {
         year: 'numeric',
@@ -196,14 +185,10 @@ async function getSessionAttendance(
       if (course && courseTyped.color) {
         attendance.courseColor = courseTyped.color
       }
-    } catch (err) {
-      console.warn('[SessionAttendancePage] Could not fetch course data:', err)
-    }
+    } catch {}
 
-    console.warn('[SessionAttendancePage] Mapped attendance:', attendance)
     return attendance
-  } catch (error) {
-    console.error('[SessionAttendancePage] Error fetching attendance:', error)
+  } catch {
     return null
   }
 }
