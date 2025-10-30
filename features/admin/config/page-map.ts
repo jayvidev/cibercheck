@@ -11,7 +11,6 @@ export const pageMap: Record<string, PageMeta> = {
   '/admin/secciones': { title: 'Secciones', authOnly: true, showInSidebar: true },
   '/admin/sesiones': { title: 'Sesiones', authOnly: true, showInSidebar: true },
   '/admin/matricula': { title: 'Matrícula', authOnly: true, showInSidebar: true },
-  // Ocultamos Asistencia del sidebar
   '/admin/asistencia': { title: 'Asistencia', authOnly: true, showInSidebar: false },
   '/admin/usuarios': { title: 'Usuarios', authOnly: true, showInSidebar: true },
 

@@ -3,8 +3,9 @@
 import * as React from 'react'
 
 import { Breadcrumbs } from '@admin/components/breadcrumbs'
+import { DataTable } from '@admin/components/data-table'
+import { columns as buildColumns, EnrollmentList } from '@admin/pages/matricula/columns'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+// Input removed: DataTable provides search
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -67,8 +68,7 @@ export default function Page() {
   const [selectedSectionId, setSelectedSectionId] = React.useState<number | null>(null)
   const [saving, setSaving] = React.useState(false)
 
-  // Filtro
-  const [filter, setFilter] = React.useState('')
+  // Filtro (DataTable proporciona buscador global)
 
   React.useEffect(() => {
     const boot = async () => {
@@ -164,6 +164,32 @@ export default function Page() {
     }
   }
 
+  const columnsMemo = React.useMemo(
+    () =>
+      buildColumns({
+        onUnenroll: async (row: EnrollmentList) => {
+          if (!selectedStudentId) return
+          const ok = await alertConfirm({
+            title: 'Desmatricular alumno',
+            text: '¿Deseas desmatricular al alumno de esta sección?',
+            confirmText: 'Sí, desmatricular',
+          })
+          if (!ok) return
+          try {
+            await unenrollStudent(row.sectionId, selectedStudentId)
+            const res = await getStudentEnrollments<any[]>(selectedStudentId)
+            setEnrollments(res || [])
+            await alertSuccess('Desmatriculado', 'Se removió la matrícula correctamente.')
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'No se pudo desmatricular'
+            setError(msg)
+            await alertError(msg)
+          }
+        },
+      }),
+    [selectedStudentId]
+  )
+
   if (loading && enrollments.length === 0) {
     return (
       <>
@@ -184,7 +210,7 @@ export default function Page() {
       <Breadcrumbs />
       <div className="flex items-center gap-4">
         <div>
-          <Label>Alumno</Label>
+          <Label className="mb-2">Alumno</Label>
           <Select
             value={selectedStudentId?.toString()}
             onValueChange={(v) => setSelectedStudentId(Number(v))}
@@ -201,18 +227,7 @@ export default function Page() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setOpenEnroll(true)} disabled={!selectedStudentId}>
-          Matricular
-        </Button>
-        <div className="ml-auto">
-          <Label className="text-sm">Buscar</Label>
-          <Input
-            placeholder="Curso o sección"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="w-64"
-          />
-        </div>
+        <div className="ml-auto" />
       </div>
 
       {error ? (
@@ -221,77 +236,16 @@ export default function Page() {
           <p className="text-sm">{error}</p>
         </div>
       ) : (
-        <div className="rounded-md border">
-          <div className="grid grid-cols-12 px-4 py-2 text-sm font-medium bg-muted/30">
-            <div className="col-span-4">Sección</div>
-            <div className="col-span-3">Curso</div>
-            <div className="col-span-3">Slug</div>
-            <div className="col-span-1">Modalidad</div>
-            <div className="col-span-1 text-right">Acciones</div>
-          </div>
-          {enrollments.length === 0 ? (
-            <div className="px-4 py-6 text-sm text-muted-foreground">Sin matrículas.</div>
-          ) : (
-            enrollments
-              .filter((e) => {
-                const q = filter.trim().toLowerCase()
-                if (!q) return true
-                return (
-                  e.name.toLowerCase().includes(q) ||
-                  e.courseName.toLowerCase().includes(q) ||
-                  `${e.courseSlug}/${e.slug}`.toLowerCase().includes(q)
-                )
-              })
-              .map((e) => (
-                <div
-                  key={e.sectionId}
-                  className="grid grid-cols-12 px-4 py-2 border-t text-sm items-center"
-                >
-                  <div className="col-span-4">{e.name}</div>
-                  <div className="col-span-3">{e.courseName}</div>
-                  <div className="col-span-3 font-mono">
-                    {e.courseSlug}/{e.slug}
-                  </div>
-                  <div className="col-span-1">
-                    <Badge variant={e.isVirtual ? 'default' : 'secondary'}>
-                      {e.isVirtual ? 'Virtual' : 'Presencial'}
-                    </Badge>
-                  </div>
-                  <div className="col-span-1 text-right">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={async () => {
-                        if (!selectedStudentId) return
-                        const ok = await alertConfirm({
-                          title: 'Desmatricular alumno',
-                          text: '¿Deseas desmatricular al alumno de esta sección?',
-                          confirmText: 'Sí, desmatricular',
-                        })
-                        if (!ok) return
-                        try {
-                          await unenrollStudent(e.sectionId, selectedStudentId)
-                          const res = await getStudentEnrollments<any[]>(selectedStudentId)
-                          setEnrollments(res || [])
-                          await alertSuccess(
-                            'Desmatriculado',
-                            'Se removió la matrícula correctamente.'
-                          )
-                        } catch (err) {
-                          const msg =
-                            err instanceof Error ? err.message : 'No se pudo desmatricular'
-                          setError(msg)
-                          await alertError(msg)
-                        }
-                      }}
-                    >
-                      Desmatricular
-                    </Button>
-                  </div>
-                </div>
-              ))
-          )}
-        </div>
+        <>
+          <DataTable
+            columns={columnsMemo}
+            data={enrollments}
+            resource="matricula"
+            title="Matrícula"
+            description="Secciones matriculadas por alumno."
+            onAdd={() => setOpenEnroll(true)}
+          />
+        </>
       )}
 
       <Dialog open={openEnroll} onOpenChange={setOpenEnroll}>
@@ -301,7 +255,7 @@ export default function Page() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Curso</Label>
+              <Label className="mb-2">Curso</Label>
               <Select value={selectedCourseSlug ?? undefined} onValueChange={setSelectedCourseSlug}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecciona un curso" />
@@ -316,7 +270,7 @@ export default function Page() {
               </Select>
             </div>
             <div>
-              <Label>Sección</Label>
+              <Label className="mb-2">Sección</Label>
               <Select
                 value={selectedSectionId?.toString()}
                 onValueChange={(v) => setSelectedSectionId(Number(v))}

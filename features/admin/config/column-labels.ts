@@ -36,6 +36,12 @@ export const columnLabelsByResource: Record<string, Record<string, string>> = {
     email: 'Correo',
     status: 'Estado',
   },
+  matricula: {
+    isVirtual: 'Modalidad',
+    name: 'Nombre',
+    slug: 'Slug',
+    courseName: 'Curso',
+  },
 }
 
 export function getColumnLabel(resource: string | undefined, columnId: string): string {

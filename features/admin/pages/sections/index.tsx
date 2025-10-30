@@ -56,7 +56,6 @@ export function SectionsPage({ title }: Props) {
   >([])
   const { user } = useAuth()
 
-  // Modales Detalles/Editar
   const [detailsOpen, setDetailsOpen] = React.useState(false)
   const [detailsItem, setDetailsItem] = React.useState<SectionList | null>(null)
   const [editOpen, setEditOpen] = React.useState(false)
@@ -69,12 +68,10 @@ export function SectionsPage({ title }: Props) {
     isVirtual?: boolean
   } | null>(null)
 
-  // Helper para sugerir el nombre de la sección con letras estilo "Sección A", "Sección B", ...
   function getNextSectionLabel(existingNames: string[]): string {
     const normalize = (s: string) => s.trim().toUpperCase()
     const letterFromName = (name: string): string | null => {
       const n = normalize(name)
-      // Buscar patrón "SECCIÓN X" o tomar última palabra si es alfabética
       const m = n.match(/SECCI[ÓO]N\s+([A-Z]{1,2})$/)
       if (m) return m[1]
       const parts = n.split(/\s+/)
@@ -82,14 +79,12 @@ export function SectionsPage({ title }: Props) {
       return /^[A-Z]{1,2}$/.test(last) ? last : null
     }
 
-    // Conjunto de etiquetas usadas (A..Z, AA..)
     const used = new Set<string>()
     for (const name of existingNames) {
       const L = letterFromName(name)
       if (L) used.add(L)
     }
 
-    // Generar etiqueta tipo Excel (A..Z, AA..AZ, BA..)
     const toLabel = (n: number): string => {
       let s = ''
       let x = n
@@ -101,7 +96,6 @@ export function SectionsPage({ title }: Props) {
       return s
     }
 
-    // Buscar la primera etiqueta libre
     let i = 1
     while (used.has(toLabel(i))) i++
     return `Sección ${toLabel(i)}`

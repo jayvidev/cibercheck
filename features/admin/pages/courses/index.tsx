@@ -272,7 +272,9 @@ export function CategoriesPage({ title }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Nombre</Label>
+                  <Label className="mb-2" htmlFor="name">
+                    Nombre
+                  </Label>
                   <Input
                     id="name"
                     value={editCourse.name}
@@ -280,7 +282,9 @@ export function CategoriesPage({ title }: Props) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="code">Código</Label>
+                  <Label className="mb-2" htmlFor="code">
+                    Código
+                  </Label>
                   <Input
                     id="code"
                     value={editCourse.code}
@@ -288,7 +292,9 @@ export function CategoriesPage({ title }: Props) {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <Label htmlFor="color">Color</Label>
+                  <Label className="mb-2" htmlFor="color">
+                    Color
+                  </Label>
                   <div className="flex items-center gap-3">
                     <Input
                       id="color"
@@ -325,7 +331,9 @@ export function CategoriesPage({ title }: Props) {
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="create-name">Nombre</Label>
+                <Label className="mb-2" htmlFor="create-name">
+                  Nombre
+                </Label>
                 <Input
                   id="create-name"
                   value={createForm.name}
@@ -333,7 +341,9 @@ export function CategoriesPage({ title }: Props) {
                 />
               </div>
               <div>
-                <Label htmlFor="create-code">Código</Label>
+                <Label className="mb-2" htmlFor="create-code">
+                  Código
+                </Label>
                 <Input
                   id="create-code"
                   value={createForm.code}
@@ -341,7 +351,9 @@ export function CategoriesPage({ title }: Props) {
                 />
               </div>
               <div className="sm:col-span-2">
-                <Label htmlFor="create-color">Color</Label>
+                <Label className="mb-2" htmlFor="create-color">
+                  Color
+                </Label>
                 <div className="flex items-center gap-3">
                   <Input
                     id="create-color"

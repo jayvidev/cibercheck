@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 import {
   Select,
   SelectContent,
@@ -56,7 +57,7 @@ export function UsersPage({ title }: Props) {
     if (!u) return errs
     if (!u.firstName?.trim()) errs.firstName = 'Requerido'
     if (!u.lastName?.trim()) errs.lastName = 'Requerido'
-    if (!ROLES.includes(u.role as any)) errs.role = 'Selecciona un rol válido'
+    if (!ROLES.includes(u.role as (typeof ROLES)[number])) errs.role = 'Selecciona un rol válido'
     return errs
   }
 
@@ -71,6 +72,9 @@ export function UsersPage({ title }: Props) {
     role: '',
     password: '',
   })
+  // Track whether the create form has been submitted at least once.
+  // When false we won't show field-level validation messages.
+  const [createSubmitted, setCreateSubmitted] = useState(false)
 
   const getCreateErrors = (f: typeof createForm) => {
     const errs: Partial<Record<'firstName' | 'lastName' | 'email' | 'role' | 'password', string>> =
@@ -78,7 +82,7 @@ export function UsersPage({ title }: Props) {
     if (!f.firstName.trim()) errs.firstName = 'Requerido'
     if (!f.lastName.trim()) errs.lastName = 'Requerido'
     if (!/.+@.+\..+/.test(f.email)) errs.email = 'Correo inválido'
-    if (!ROLES.includes(f.role as any)) errs.role = 'Selecciona un rol válido'
+    if (!ROLES.includes(f.role as (typeof ROLES)[number])) errs.role = 'Selecciona un rol válido'
     if (!f.password || f.password.length < 6) errs.password = 'Mínimo 6 caracteres'
     return errs
   }
@@ -142,10 +146,14 @@ export function UsersPage({ title }: Props) {
   const onOpenCreate = () => {
     setCreateForm({ firstName: '', lastName: '', email: '', role: '', password: '' })
     setCreateError(null)
+    // Reset submitted flag when opening modal so errors don't show immediately.
+    setCreateSubmitted(false)
     setCreateOpen(true)
   }
 
   const onSaveCreate = async () => {
+    // Mark that the user tried to submit so we can show field-level errors.
+    setCreateSubmitted(true)
     const errs = getCreateErrors(createForm)
     if (Object.keys(errs).length > 0) {
       setCreateError('Corrige los campos marcados en rojo.')
@@ -257,7 +265,9 @@ export function UsersPage({ title }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">Nombre</Label>
+                  <Label className="mb-2" htmlFor="firstName">
+                    Nombre
+                  </Label>
                   <Input
                     id="firstName"
                     value={editUser.firstName}
@@ -271,7 +281,9 @@ export function UsersPage({ title }: Props) {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="lastName">Apellido</Label>
+                  <Label className="mb-2" htmlFor="lastName">
+                    Apellido
+                  </Label>
                   <Input
                     id="lastName"
                     value={editUser.lastName}
@@ -285,11 +297,15 @@ export function UsersPage({ title }: Props) {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <Label htmlFor="email">Correo</Label>
+                  <Label className="mb-2" htmlFor="email">
+                    Correo
+                  </Label>
                   <Input id="email" value={editUser.email} readOnly />
                 </div>
                 <div>
-                  <Label htmlFor="role">Rol</Label>
+                  <Label className="mb-2" htmlFor="role">
+                    Rol
+                  </Label>
                   <Select
                     value={editUser.role}
                     onValueChange={(v) => setEditUser({ ...editUser, role: v })}
@@ -337,50 +353,58 @@ export function UsersPage({ title }: Props) {
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="create-firstName">Nombre</Label>
+                <Label className="mb-2" htmlFor="create-firstName">
+                  Nombre
+                </Label>
                 <Input
                   id="create-firstName"
                   value={createForm.firstName}
-                  aria-invalid={!!getCreateErrors(createForm).firstName}
+                  aria-invalid={createSubmitted && !!getCreateErrors(createForm).firstName}
                   onChange={(e) => setCreateForm({ ...createForm, firstName: e.target.value })}
                 />
-                {getCreateErrors(createForm).firstName && (
+                {createSubmitted && getCreateErrors(createForm).firstName && (
                   <p className="text-xs text-destructive mt-1">
                     {getCreateErrors(createForm).firstName}
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="create-lastName">Apellido</Label>
+                <Label className="mb-2" htmlFor="create-lastName">
+                  Apellido
+                </Label>
                 <Input
                   id="create-lastName"
                   value={createForm.lastName}
-                  aria-invalid={!!getCreateErrors(createForm).lastName}
+                  aria-invalid={createSubmitted && !!getCreateErrors(createForm).lastName}
                   onChange={(e) => setCreateForm({ ...createForm, lastName: e.target.value })}
                 />
-                {getCreateErrors(createForm).lastName && (
+                {createSubmitted && getCreateErrors(createForm).lastName && (
                   <p className="text-xs text-destructive mt-1">
                     {getCreateErrors(createForm).lastName}
                   </p>
                 )}
               </div>
               <div className="sm:col-span-2">
-                <Label htmlFor="create-email">Correo</Label>
+                <Label className="mb-2" htmlFor="create-email">
+                  Correo
+                </Label>
                 <Input
                   id="create-email"
                   type="email"
                   value={createForm.email}
-                  aria-invalid={!!getCreateErrors(createForm).email}
+                  aria-invalid={createSubmitted && !!getCreateErrors(createForm).email}
                   onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
                 />
-                {getCreateErrors(createForm).email && (
+                {createSubmitted && getCreateErrors(createForm).email && (
                   <p className="text-xs text-destructive mt-1">
                     {getCreateErrors(createForm).email}
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="create-role">Rol</Label>
+                <Label className="mb-2" htmlFor="create-role">
+                  Rol
+                </Label>
                 <Select
                   value={createForm.role}
                   onValueChange={(v) => setCreateForm({ ...createForm, role: v })}
@@ -396,22 +420,24 @@ export function UsersPage({ title }: Props) {
                     ))}
                   </SelectContent>
                 </Select>
-                {getCreateErrors(createForm).role && (
+                {createSubmitted && getCreateErrors(createForm).role && (
                   <p className="text-xs text-destructive mt-1">
                     {getCreateErrors(createForm).role}
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="create-password">Contraseña</Label>
-                <Input
+                <Label className="mb-2" htmlFor="create-password">
+                  Contraseña
+                </Label>
+                <PasswordInput
                   id="create-password"
                   type="password"
                   value={createForm.password}
-                  aria-invalid={!!getCreateErrors(createForm).password}
+                  aria-invalid={createSubmitted && !!getCreateErrors(createForm).password}
                   onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
                 />
-                {getCreateErrors(createForm).password && (
+                {createSubmitted && getCreateErrors(createForm).password && (
                   <p className="text-xs text-destructive mt-1">
                     {getCreateErrors(createForm).password}
                   </p>
@@ -426,10 +452,7 @@ export function UsersPage({ title }: Props) {
               >
                 Cancelar
               </Button>
-              <Button
-                onClick={onSaveCreate}
-                disabled={createSaving || Object.keys(getCreateErrors(createForm)).length > 0}
-              >
+              <Button onClick={onSaveCreate} disabled={createSaving}>
                 {createSaving ? 'Creando...' : 'Crear'}
               </Button>
             </DialogFooter>
