@@ -42,8 +42,13 @@ export const useSearch = () => {
 
   if (!context) {
     if (process.env.NODE_ENV === 'development') {
+      console.warn('[useSearch] called outside of <SearchProvider> during hot reload')
+
       return {
         open: false,
+        setOpen: () => {
+          console.warn('[useSearch] setOpen was called without context (ignored)')
+        },
       }
     }
 
