@@ -15,8 +15,8 @@ import {
   Monitor,
   QrCode as QRCode,
   RefreshCw,
-  Users,
   University,
+  Users,
   XCircle,
 } from 'lucide-react'
 
@@ -435,7 +435,7 @@ export function AttendanceTable({
   return (
     <div className="space-y-6">
       <div className="mb-8 space-y-4">
-          <div className="flex flex-col md:flex-row md:items-start gap-4">
+        <div className="flex flex-col md:flex-row md:items-start gap-4">
           <div
             className="h-16 w-1 rounded-full"
             style={{ backgroundColor: courseColor || '#3b82f6' }}
