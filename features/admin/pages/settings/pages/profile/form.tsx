@@ -121,7 +121,10 @@ export function ProfileForm() {
       return
     }
     try {
-      await updateUserProfile(authUser.userId, { firstName: data.firstName, lastName: data.lastName })
+      await updateUserProfile(authUser.userId, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+      })
       await alertSuccess('Perfil actualizado', 'Tu información se actualizó correctamente.')
       // refrescar contexto (mostrar en header/sidebar sin recargar)
       await refreshUser(authUser.userId)
