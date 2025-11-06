@@ -4,6 +4,7 @@ export interface User {
   lastName: string
   email: string
   role: 'profesor' | 'estudiante' | 'administrador'
+  profileImageUrl?: string | null
 }
 
 export interface LoginResponse {

@@ -6,6 +6,7 @@ export type UserUpdatePayload = {
   firstName: string
   lastName: string
   role: string
+  profileImageUrl?: string | null
 }
 
 export type UserCreatePayload = UserUpdatePayload & {
@@ -69,11 +70,11 @@ export async function changePassword<T = unknown>(
 
 export async function updateUserProfile<T = unknown>(
   userId: number | string,
-  body: { firstName?: string; lastName?: string },
+  body: { firstName?: string; lastName?: string; profileImageUrl?: string | null },
   schema?: Schema<T>
 ): Promise<T> {
   return fetchJson<T>({
-    path: `/api/v1/users/${userId}`,
+    path: `/api/v1/users/${userId}/profile`,
     method: 'PUT',
     body,
     schema,
