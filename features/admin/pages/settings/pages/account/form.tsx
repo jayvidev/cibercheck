@@ -1,5 +1,6 @@
 'use client'
 
+import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -14,7 +15,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { PasswordInput } from '@/components/ui/password-input'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { alertError, alertSuccess } from '@/lib/alerts'
+import { changePassword } from '@/lib/endpoints/users'
+import { useAuth } from '@/context/auth-context'
 
 const passwordSchema = z
   .object({
@@ -50,9 +53,25 @@ export function AccountForm() {
     resolver: zodResolver(passwordSchema),
     defaultValues: { currentPassword: '', newPassword: '', confirmNewPassword: '' },
   })
+  const { user } = useAuth()
+  const [saving, setSaving] = React.useState(false)
 
-  const onSubmit = (data: PasswordFormValues) => {
-    showSubmittedData(data)
+  const onSubmit = async (data: PasswordFormValues) => {
+    if (!user?.userId) {
+      await alertError('No se pudo identificar al usuario actual.')
+      return
+    }
+    setSaving(true)
+    try {
+      await changePassword(user.userId, data.currentPassword, data.newPassword)
+      form.reset({ currentPassword: '', newPassword: '', confirmNewPassword: '' })
+      await alertSuccess('Contraseña actualizada', 'Tu contraseña se cambió correctamente.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'No se pudo cambiar la contraseña'
+      await alertError(msg)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -114,7 +133,9 @@ export function AccountForm() {
           </div>
         </div>
         <div className="flex justify-center sm:justify-start">
-          <Button type="submit">Cambiar contraseña</Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? 'Guardando...' : 'Cambiar contraseña'}
+          </Button>
         </div>
       </form>
     </Form>

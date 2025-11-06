@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { login as loginAPI } from '@/lib/endpoints/users'
+import { login as loginAPI, getUser as getUserAPI } from '@/lib/endpoints/users'
 import type { AuthContextType, LoginResponse, User } from '@/typings/auth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -80,6 +80,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }
 
+  const refreshUser = async (userId?: number) => {
+    try {
+      const id = userId ?? user?.userId
+      if (!id) return
+      const fresh = await getUserAPI<User>(id)
+      setUser(fresh)
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(fresh))
+      // También actualizar cookie de usuario en servidor si aplica
+      try {
+        await saveCookieToServer(USER_STORAGE_KEY, JSON.stringify(fresh))
+      } catch {}
+    } catch (error) {
+      console.error('Error refreshing user:', error)
+    }
+  }
+
   const value: AuthContextType = {
     user,
     token,
@@ -87,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: !!user && !!token,
     login: handleLogin,
     logout: handleLogout,
+    refreshUser,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

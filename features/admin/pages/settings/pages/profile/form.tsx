@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/context/auth-context'
+import { updateUserProfile } from '@/lib/endpoints/users'
+import { alertError, alertSuccess } from '@/lib/alerts'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 
 const photoSchema = z.object({
@@ -84,7 +86,7 @@ export function ProfileForm() {
     defaultValues: personalDefaults,
     mode: 'onChange',
   })
-  const { user: authUser } = useAuth()
+  const { user: authUser, refreshUser } = useAuth()
 
   useEffect(() => {
     if (authUser) {
@@ -113,8 +115,23 @@ export function ProfileForm() {
     showSubmittedData(data)
   }
 
-  const handlePersonalSubmit = (data: PersonalFormValues) => {
-    showSubmittedData(data)
+  const handlePersonalSubmit = async (data: PersonalFormValues) => {
+    if (!authUser?.userId) {
+      await alertError('No se pudo identificar al usuario actual.')
+      return
+    }
+    try {
+      await updateUserProfile(authUser.userId, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+      })
+      await alertSuccess('Perfil actualizado', 'Tu información se actualizó correctamente.')
+      // refrescar contexto (mostrar en header/sidebar sin recargar)
+      await refreshUser(authUser.userId)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'No se pudo actualizar el perfil'
+      await alertError(msg)
+    }
   }
 
   useEffect(() => {
@@ -247,6 +264,8 @@ export function ProfileForm() {
                       type="email"
                       placeholder="ejemplo@correo.com"
                       autoComplete="email"
+                      readOnly
+                      disabled
                       {...field}
                     />
                   </FormControl>

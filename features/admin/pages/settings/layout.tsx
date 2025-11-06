@@ -24,16 +24,17 @@ const sidebarNavItems = [
     href: '/admin/ajustes/apariencia',
     icon: <Palette size={18} />,
   },
-  {
-    title: 'Notificaciones',
-    href: '/admin/ajustes/notificaciones',
-    icon: <Bell size={18} />,
-  },
-  {
-    title: 'Visualización',
-    href: '/admin/ajustes/visualizacion',
-    icon: <Monitor size={18} />,
-  },
+  // Ocultado temporalmente según requerimiento
+  // {
+  //   title: 'Notificaciones',
+  //   href: '/admin/ajustes/notificaciones',
+  //   icon: <Bell size={18} />,
+  // },
+  // {
+  //   title: 'Visualización',
+  //   href: '/admin/ajustes/visualizacion',
+  //   icon: <Monitor size={18} />,
+  // },
 ]
 
 export function SettingsLayout({ children }: Props) {

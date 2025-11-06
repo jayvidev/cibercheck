@@ -52,3 +52,30 @@ export async function login<T = unknown>(
     schema,
   })
 }
+
+export async function changePassword<T = unknown>(
+  userId: number | string,
+  currentPassword: string,
+  newPassword: string,
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/users/${userId}/change-password`,
+    method: 'POST',
+    body: { currentPassword, newPassword },
+    schema,
+  })
+}
+
+export async function updateUserProfile<T = unknown>(
+  userId: number | string,
+  body: { firstName?: string; lastName?: string },
+  schema?: Schema<T>
+): Promise<T> {
+  return fetchJson<T>({
+    path: `/api/v1/users/${userId}`,
+    method: 'PUT',
+    body,
+    schema,
+  })
+}
