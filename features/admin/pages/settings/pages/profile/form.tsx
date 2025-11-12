@@ -149,6 +149,14 @@ export function ProfileForm() {
     }
   }
 
+  // Clear avatar locally; persistence occurs on "Actualizar perfil"
+  const handleClearAvatarLocally = () => {
+    setSelectedAvatar(null)
+    setAvatarUrl(null)
+    photoForm.setValue('photo', null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
   useEffect(() => {
     if (photoValue instanceof File) {
       try {
@@ -208,10 +216,10 @@ export function ProfileForm() {
                   <ImageIcon className="text-current" />
                   Elegir avatar
                 </DropdownMenuItem>
-                {avatarUrl && (
-                  <DropdownMenuItem variant="destructive" onClick={handleDeletePhoto}>
+                {(avatarUrl || selectedAvatar) && (
+                  <DropdownMenuItem variant="destructive" onClick={handleClearAvatarLocally}>
                     <Trash />
-                    Eliminar foto
+                    Quitar imagen
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -295,11 +303,6 @@ export function ProfileForm() {
           </div>
           <div className="flex justify-center sm:justify-start gap-4">
             <Button type="submit">Actualizar perfil</Button>
-            {selectedAvatar && (
-              <Button type="button" variant="secondary" onClick={() => { setSelectedAvatar(null); setAvatarUrl(null); }}>
-                Quitar avatar
-              </Button>
-            )}
           </div>
         </form>
       </Form>
