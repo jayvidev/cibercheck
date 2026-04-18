@@ -1,0 +1,37 @@
+# Android/Gradle
+.gradle/
+build/
+**/build/
+local.properties
+.cxx/
+.externalNativeBuild/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+# (algunos repos usan ignores puntuales)
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.navigation/
+captures/
+
+# Kotlin / caches
+.kotlin/
+
+# Signing (do not commit)
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Artifacts & logs (optional)
+*.apk
+*.aab
+app/release/
+*.log

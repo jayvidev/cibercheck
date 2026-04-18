@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_email_login">Ingresa tu correo institucional</string>
+
+    <string name="message_validation">Te enviamos un código de 6 dígitos para validar tu identidad</string>
+
+    <string name="login_otp_code">Código enviado a tu correo</string>
+    <string name="login_otp_code_resend">Código reenviado a tu correo</string>
+
+    <string name="btn_not_code_timer">Reenviar código en %1$d</string>
+
+    <string name="error_enter_email">Ingresa tu correo</string>
+    <string name="error_enter_user_code">Ingresa tu codigo de usuario</string>
+    <string name="error_unknown_server">Error desconocido del servidor</string>
+    <string name="error_empty_email">Error: No se ha proporcionado un email.</string>
+    <string name="error_sending_code">Error al reenviar el código</string>
+</resources>

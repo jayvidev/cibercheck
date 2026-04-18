@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="space_4">4dp</dimen>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_20">20dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+    <dimen name="space_48">40dp</dimen>
+    <dimen name="space_56">56dp</dimen>
+
+    <dimen name="btn_height_small">40dp</dimen>
+    <dimen name="btn_height_default">48dp</dimen>
+    <dimen name="list_item_min_height">72dp</dimen>
+
+    <dimen name="icon_16">16dp</dimen>
+    <dimen name="icon_20">20dp</dimen>
+    <dimen name="icon_24">24dp</dimen>
+    <dimen name="icon_32">32dp</dimen>
+    <dimen name="icon_40">40dp</dimen>
+
+    <dimen name="text_12">12sp</dimen>
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_20">20sp</dimen>
+    <dimen name="text_24">24sp</dimen>
+    <dimen name="text_32">32sp</dimen>
+
+    <dimen name="thumb_size">56dp</dimen>
+    <dimen name="image_card_height">180dp</dimen>
+
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_56">56dp</dimen>
+
+    <dimen name="input_46">46dp</dimen>
+    <dimen name="input_56">56dp</dimen>
+
+    <dimen name="corner_12">12dp</dimen>
+    <dimen name="corner_16">16dp</dimen>
+    <dimen name="corner_24">24dp</dimen>
+
+    <dimen name="button_corner_25">25dp</dimen>
+
+    <dimen name="content_max_width">600dp</dimen>
+</resources>

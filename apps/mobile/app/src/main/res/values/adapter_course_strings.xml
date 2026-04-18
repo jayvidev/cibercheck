@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_in_progress">En curso: %1$s</string>
+    <string name="status_starting_soon">%1$s</string>
+    <string name="status_finished">Finalizado: %1$s</string>
+    <string name="status_upcoming">Próximo: %1$s</string>
+</resources>

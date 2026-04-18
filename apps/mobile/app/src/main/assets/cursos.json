@@ -1,0 +1,19 @@
+[
+  {
+    "periodoId": "CIBERTEC.4377.202509P.615",
+    "nombre": "4377 DESARROLLO DE HABILIDADES PROFESIONALES III",
+    "enCurso": true
+  },
+  {
+    "periodoId": "CIBERTEC.4693.202509P.1875",
+    "nombre": "4693 DESARROLLO DE APLICACIONES MÓVILES I",
+    "enCurso": false,
+    "tiempo": "23 minutos"
+  },
+  {
+    "periodoId": "CIBERTEC.2414.202509P.2511.LX4353XE800",
+    "nombre": "2414 SEGURIDAD DE APLICACIONES",
+    "enCurso": false,
+    "tiempo": "3 horas 1 minuto"
+  }
+]

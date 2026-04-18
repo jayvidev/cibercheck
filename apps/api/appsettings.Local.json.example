@@ -1,0 +1,11 @@
+{
+    "ConnectionStrings": {
+        "DB": "server=YOUR_SERVER; database=CiberCheck; Integrated Security=true; TrustServerCertificate=true"
+    },
+    "Jwt": {
+        "Secret": "CHANGE_THIS_TO_A_STRONG_SECRET_KEY_AT_LEAST_32_CHARACTERS_LONG",
+        "Issuer": "CiberCheckAPI",
+        "Audience": "CiberCheckClients",
+        "ExpirationInHours": 24
+    }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "590397521089",
+    "project_id": "cibercheck-app",
+    "storage_bucket": "cibercheck-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590397521089:android:85f0c4f0d50c82445ca840",
+        "android_client_info": {
+          "package_name": "com.example.cibercheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPRE0BbvtCoC0s1GHijj3eTXV12m8m0Bk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

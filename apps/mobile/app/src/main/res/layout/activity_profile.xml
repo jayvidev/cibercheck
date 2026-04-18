@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/button_secondary"
+    tools:context=".activity.MiPerfilActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tb_miperfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_24"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back">
+
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_volver_perfil"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_16"
+            android:textStyle="bold" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <TextView
+        android:id="@+id/tv_misDatos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/margin_24"
+        android:text="@string/title_my_data"
+        android:textColor="@color/text_btn"
+        android:textSize="@dimen/text_16"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_miperfil" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/layout_datos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/space_8"
+
+        app:cardBackgroundColor="@color/button_secondary_pressed"
+        app:cardCornerRadius="@dimen/corner_12"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_misDatos">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_nombreUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_48"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/margin_16"
+                android:textColor="@color/text_btn"
+
+                tools:text="@string/placeholder_name" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="@dimen/margin_16"
+                android:background="@color/neutral_light" />
+
+            <TextView
+                android:id="@+id/tv_correoUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_48"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/margin_16"
+                android:textColor="@color/text_btn"
+
+                tools:text="@string/txt_email" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_seguridad"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/margin_24"
+        android:text="@string/tile_security"
+        android:textColor="@color/text_btn"
+        android:textSize="@dimen/text_16"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_datos" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/layout_seguridad"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/margin_8"
+
+        app:cardBackgroundColor="@color/button_secondary_pressed"
+        app:cardCornerRadius="@dimen/corner_12"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_seguridad">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_48"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/margin_16">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/txt_fingerprint"
+                android:textColor="@color/text_btn"
+                android:textSize="@dimen/text_14" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/sw_huella"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/space_48"
+                android:minHeight="@dimen/space_48"
+
+                app:thumbTint="@color/primary"
+                app:trackTint="@color/button_secondary_pressed"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:backgroundTint="@color/primary"
+        android:id="@+id/btn_cerrarSesion"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/space_16"
+        android:layout_width="match_parent"
+        android:text="@string/btn_log_out"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_14"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_seguridad" />
+</androidx.constraintlayout.widget.ConstraintLayout>

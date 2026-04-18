@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_undefined">-- : --</string>
+
+    <string name="status_present">Presente</string>
+    <string name="status_absent">Ausente</string>
+    <string name="status_late">Tarde</string>
+</resources>

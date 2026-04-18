@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_volver_marcar">Volver a Mis Clases</string>
+
+    <string name="qr_mark_error">No se pudo marcar la asistencia</string>
+    <string name="qr_mark_sending">Marcando asistencia…</string>
+    <string name="qr_sending_attendance">Procesando…</string>
+    <string name="qr_attendance_marked_success">Asistencia marcada como %1$s</string>
+    <string name="qr_process">QR detectado, procesando…</string>
+
+    <string name="error_qr_generic">Error: %1$s</string>
+    <string name="error_qr_connection">Error de conexión: %1$s</string>
+    <string name="error_qr_invalid">Error: respuesta inválida del servidor</string>
+    <string name="error_qr_image">Error al procesar la imagen</string>
+</resources>

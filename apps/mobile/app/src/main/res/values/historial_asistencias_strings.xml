@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_history">Historial de asistencias</string>
+
+    <string name="filter_date">Filtrar por fecha</string>
+    <string name="filter_status">Filtrar por estado</string>
+
+
+    <string name="btn_volver_perfil">Volver a Mis Clases</string>
+    <string name="btn_search">Buscar con filtros</string>
+
+    <string name="state_date">21/10/2025</string>
+    <string name="state_time">08:00AM - 10:00AM</string>
+    <string name="state_session">Sesion A</string>
+    <string name="state_class">Diseño de Aplicaciones Móviles</string>
+
+    <string name="picker_open_date">Abrir filtro para fecha</string>
+    <string name="picker_open_state">Abrir filtro para estado</string>
+
+    <string name="email_suffix">@cibertec.edu.pe</string>
+
+    <string name="error_student_id_not_found">No se encontró ID del estudiante</string>
+    <string name="error_history_loading">Error al cargar historial</string>
+    <string name="error_no_records_for_date">Sin registros para esa fecha</string>
+    <string name="error_no_records_for_status">Sin registros con ese estado</string>
+    <string name="error_no_results_found">Sin resultados</string>
+    <string name="error_no_records_found_generic">No se encontraron registros</string>
+    <string name="error_network">Error de red: %1$s</string>
+</resources>

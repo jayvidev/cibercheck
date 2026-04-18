@@ -1,0 +1,35 @@
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="dark_700">#616161</color>
+    <color name="white_75">#BFFFFFFF</color>
+
+    <color name="background">#00284A</color>
+    <color name="primary_dark">#0B2C4A</color>
+    <color name="primary">#124E78</color>
+    <color name="primary_light">#1E88E5</color>
+
+    <color name="state_ok">#2ECC71</color>
+    <color name="state_error">#E74C3C</color>
+    <color name="state_warning">#F39C12</color>
+
+    <color name="neutral_dark">#2C3E50</color>
+    <color name="neutral_medium">#BDC3C7</color>
+    <color name="neutral_light">#ECF0F1</color>
+    <color name="text_btn">#3C494D</color>
+
+    <color name="background_light">#F8FAFC</color>
+    <color name="background_alt">#E9EEF2</color>
+
+    <color name="button_primary">#124E78</color>
+    <color name="button_primary_pressed">#1E88E5</color>
+    <color name="button_secondary">#81C2F8</color>
+    <color name="button_secondary_pressed">#BDC3C7</color>
+
+    <color name="blue_soft">#DCEBFA</color>
+    <color name="blue_soft_dark">#B7D4F4</color>
+
+    <color name="qr_overlay_dark">#99000000</color>
+
+    <color name="alert_qr">#80000000</color>
+</resources>

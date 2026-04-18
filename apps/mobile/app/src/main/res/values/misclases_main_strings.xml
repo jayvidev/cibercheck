@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brand_cibercheck">CiberCheck</string>
+
+    <string name="title_mis_clases">Mis Clases</string>
+
+    <string name="btn_marcar_asistencia">Marcar asistencia</string>
+    <string name="btn_historial">Historial de asistencias</string>
+
+    <string name="estado_curso">En curso</string>
+    <string name="estado_inicia_en">Inicia en %1$s</string>
+
+    <string name="schedule_not_defined">Horario no definido</string>
+    <string name="starts_in_minutes">Empieza en %1$d min</string>
+
+    <string name="cd_scan_qr">Escanear código QR</string>
+    <string name="cd_historial">Ver historial de asistencias</string>
+    <string name="cd_perfil">Mi perfil</string>
+
+    <string name="ph_codigo_periodo">CIBERTEC.4693.202509P.1875</string>
+    <string name="ph_nombre_curso">4693 DESARROLLO DE APLICACIONES MÓVILES I</string>
+
+    <string name="error_processing_attendance">Error al procesar la asistencia</string>
+</resources>

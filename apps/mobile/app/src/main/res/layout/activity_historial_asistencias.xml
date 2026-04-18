@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.HistorialAsistenciasActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tb_historialDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/space_24"
+        android:background="@android:color/transparent"
+        android:navigationIcon="@drawable/ic_arrow_back"
+        android:titleTextColor="@color/primary"
+
+        app:navigationIconTint="@color/black"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_volver_perfil"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_16"
+            android:textStyle="bold" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <TextView
+        android:id="@+id/tvHistorial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginTop="@dimen/space_8"
+        android:text="@string/title_history"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_20"
+        android:textStyle="bold"
+
+        app:layout_constraintTop_toBottomOf="@id/tb_historialDetalle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_filtros_historial_detalle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/space_16"
+        android:layout_marginHorizontal="@dimen/space_24"
+
+        app:layout_constraintTop_toBottomOf="@id/tvHistorial"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_fecha"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            app:endIconContentDescription="@string/picker_open_date"
+            app:boxStrokeColor="@color/primary">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_fechaFiltro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/filter_date"
+                android:focusable="false"
+                android:inputType="none"
+                android:textSize="@dimen/text_14"
+                android:importantForAccessibility="no" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space
+            android:layout_width="@dimen/space_16"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_estado"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            app:endIconContentDescription="@string/picker_open_state"
+            app:boxStrokeColor="@color/primary"
+            app:endIconMode="dropdown_menu">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_estadoFiltro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/filter_status"
+                android:textSize="@dimen/text_14"
+                android:importantForAccessibility="no" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/btn_buscar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_search"
+            android:padding="@dimen/space_8"
+
+            app:srcCompat="@drawable/ic_lupa" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_historialDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginHorizontal="@dimen/space_24"
+        android:layout_marginBottom="@dimen/space_24"
+
+        app:layout_constraintTop_toBottomOf="@id/layout_filtros_historial_detalle"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        tools:listitem="@layout/item_historial" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

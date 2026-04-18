@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_verification">Verificación por código de 6 dígitos</string>
+
+    <string name="text_message_verification_email">Ingresa el código que te mandamos a tu correo</string>
+    <string name="txt_email">Código del estudiante</string>
+
+    <string name="flash_off">Encender linterna</string>
+    <string name="flash_on">Apagar linterna</string>
+
+    <string name="btn_not_code">No recibí el código</string>
+    <string name="btn_next">Siguiente</string>
+    <string name="btn_return">Volver</string>
+
+    <string name="biometric_prompt_title">Verificación de CiberCheck</string>
+    <string name="biometric_prompt_subtitle">Usa tu huella, rostro o PIN para continuar</string>
+    <string name="biometric_authentication">Autenticacion requerida</string>
+
+    <string name="log_save_success">Log guardado con ID: %1$s</string>
+
+    <string name="verification_complete">Verificación completa</string>
+
+    <string name="accessibility_code">Ingrese el código de verificación</string>
+
+    <string name="error_verification_server">Respuesta invalida del servidor, Intente de nuevo</string>
+    <string name="error_expired_code">Código incorrecto o expirado</string>
+    <string name="error_connection_code">Error de conexión</string>
+    <string name="error_log">Error al guardar log</string>
+</resources>
